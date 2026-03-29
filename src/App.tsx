@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Leaf, 
@@ -25,10 +25,14 @@ import {
   Calendar,
   Sprout,
   Flower2,
-  Calculator
+  Calculator,
+  Check,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import emailjs from '@emailjs/browser';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -38,38 +42,78 @@ const services = [
   {
     title: "Sekání trávy",
     description: "Pravidelné i jednorázové sečení trávníků všech rozměrů, od malých zahrad po velké firemní areály.",
+    longDescription: "Zajistíme zkrácení vašeho trávníku. Nabízíme sečení rotačními sekačkami se sběrem do koše, mulčování vysoké trávy i sečení křovinořezem v těžko přístupných místech nebo svazích. Odvážíme a ekologicky likvidujeme veškerý vzniklý bioodpad.",
     icon: Sprout,
-    price: "od 2 Kč/m²"
+    price: "od 2 Kč/m²",
+    image: "https://images.pexels.com/photos/20113318/pexels-photo-20113318.jpeg?auto=compress&cs=tinysrgb&w=800",
+    detailedPrices: [
+      { name: "Sekačkou bez sběru (do 10 cm)", price: "2 Kč/m²" },
+      { name: "Sekačkou se sběrem (do 10 cm)", price: "2,5 Kč/m²" },
+      { name: "Vysoká tráva (10–15 cm) se sběrem", price: "6 Kč/m²" },
+      { name: "Křovinořez (do 25 cm) bez sběru", price: "6 Kč/m²" }
+    ]
   },
   {
     title: "Střih keřů a živých plotů",
     description: "Tvarování a zmlazování živých plotů a okrasných dřevin pro dokonalý vzhled vaší zahrady.",
+    longDescription: "Provádíme řez okrasných dřevin, tvarování živých plotů i zmlazovací řezy starších keřů. Práce provádíme s důrazem na zdraví rostlin a estetický výsledek.",
     icon: Trees,
-    price: "od 800 Kč/hod"
+    price: "od 800 Kč/hod",
+    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=800",
+    detailedPrices: [
+      { name: "Nižší keře (do 2 m)", price: "800 Kč/hod" },
+      { name: "Vyšší keře a stromy", price: "1200 Kč/hod" },
+      { name: "Práce ve svahu (příplatek)", price: "+200 Kč/hod" }
+    ]
   },
   {
     title: "Záhony a výsadba",
     description: "Pletí, mulčování, hnojení a výsadba nových rostlin. Postaráme se, aby vaše záhony kvetly.",
+    longDescription: "Kompletní péče o vaše okrasné i užitkové záhony. Od jarního pletí a hnojení přes doplňování mulčovací kůry až po podzimní přípravu na zimu. Zajistíme potřebný materiál pro výsadbu i údržbu.",
     icon: Shovel,
-    price: "od 600 Kč/hod"
+    price: "od 600 Kč/hod",
+    image: "https://images.pexels.com/photos/59659/pexels-photo-59659.jpeg?auto=compress&cs=tinysrgb&w=800",
+    detailedPrices: [
+      { name: "Pletí plevele", price: "600 Kč/hod" },
+      { name: "Mulčování a výsadba", price: "800 Kč/hod" },
+      { name: "Doplnění zeminy", price: "800 Kč/hod" }
+    ]
   },
   {
     title: "Vertikutace trávníku",
     description: "Provzdušnění trávníku pro lepší příjem živin a vody. Nezbytné pro zdravý a hustý pažit.",
+    longDescription: "Vertikutace odstraňuje z trávníku plsť, mech a zbytky rostlin, které brání přístupu vzduchu, vody a živin ke kořenům. Doporučujeme provádět dvakrát ročně (jaro/podzim) pro udržení hustého a sytě zeleného trávníku bez mechu.",
     icon: CheckCircle2,
-    price: "9 Kč/m²"
+    price: "9 Kč/m²",
+    image: "https://images.pexels.com/photos/12932883/pexels-photo-12932883.jpeg?auto=compress&cs=tinysrgb&w=800",
+    detailedPrices: [
+      { name: "Vertikutace / vyčesání trávníku", price: "9 Kč/m²" },
+      { name: "Oprava trávníku (zemina + osivo)", price: "25 Kč/m²" }
+    ]
   },
   {
     title: "Úklid listí a bioodpadu",
     description: "Kompletní sezónní úklid zahrady včetně odvozu a ekologické likvidace veškerého bioodpadu.",
+    longDescription: "Zbavíme vaši zahradu spadaného listí, větví a dalších organických zbytků. Vše naložíme a odvezeme k ekologické likvidaci. Nabízíme i pravidelný odvoz bioodpadu z vašich nádob nebo kompostů.",
     icon: Leaf,
-    price: "6 Kč/m²"
+    price: "6 Kč/m²",
+    image: "https://images.pexels.com/photos/14168019/pexels-photo-14168019.jpeg?auto=compress&cs=tinysrgb&w=800",
+    detailedPrices: [
+      { name: "Hrabání listí", price: "6 Kč/m²" },
+      { name: "Odvoz bioodpadu", price: "450 Kč/m³" }
+    ]
   },
   {
     title: "Zimní údržba",
     description: "Údržba zpevněných ploch posypovou solí či štěrkem. Zajištění bezpečného pohybu v zimním období.",
+    longDescription: "Zajišťujeme sjízdnost a schůdnost chodníků, parkovišť a příjezdových cest. Provádíme posyp solí nebo inertním materiálem. Služba je dostupná pro firmy, SVJ i soukromé osoby v Liberci a okolí.",
     icon: Snowflake,
-    price: "900 Kč/motohodina (+ materiál)"
+    price: "900 Kč/h",
+    image: "https://images.pexels.com/photos/15921627/pexels-photo-15921627.jpeg?auto=compress&cs=tinysrgb&w=800",
+    detailedPrices: [
+      { name: "Zimní údržba (strojní)", price: "900 Kč/motohodina" },
+      { name: "Posypový materiál", price: "dle spotřeby" }
+    ]
   }
 ];
 
@@ -88,7 +132,7 @@ const specializations = [
   },
   {
     title: "Soukromé zahrady",
-    description: "Vytvoříme z vaší zahrady oázu klidu, o kterou se nemusíte starat. Vy jen odpočívejte.",
+    description: "Zajistíme kompletní údržbu vaší zahrady, aby zůstala oázou klidu. Vy jen odpočívejte.",
     icon: Home,
     color: "bg-brand-100 text-brand-600"
   }
@@ -210,7 +254,9 @@ interface PriceBreakdownItem {
 
 const getDistanceByPsc = (psc: string): number => {
   const cleanPsc = psc.replace(/\s/g, '');
-  if (cleanPsc === '46312') return 0; // Dlouhý Most
+  
+  // Lokality s dopravou zdarma (Liberec, Dlouhý Most, Šimonovice, Jeřmanice)
+  if (cleanPsc.startsWith('460') || cleanPsc === '46312') return 0;
   
   // Specific towns
   if (cleanPsc.startsWith('511')) return 22; // Turnov
@@ -221,7 +267,7 @@ const getDistanceByPsc = (psc: string): number => {
   if (cleanPsc.startsWith('464')) return 32; // Frýdlant
   
   // General areas
-  if (cleanPsc.startsWith('460') || cleanPsc.startsWith('463')) return 8; // Liberec a blízké okolí
+  if (cleanPsc.startsWith('463')) return 8; // Blízké okolí Liberce
   if (cleanPsc.startsWith('46')) return 25;
   if (cleanPsc.startsWith('51')) return 30;
   
@@ -232,7 +278,10 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | null>(null);
+  const [selectedService, setSelectedService] = useState<any>(null);
   const [view, setView] = useState<'main' | 'calculator'>('main');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -340,6 +389,59 @@ export default function App() {
   const priceBreakdown = getPriceBreakdown();
   const calculatedPrice = priceBreakdown.reduce((sum, item) => sum + item.price, 0);
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email) {
+      alert('Prosím vyplňte jméno a email.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    const templateParams = {
+      to_name: formData.name,
+      to_email: formData.email,
+      owner_email: 'zahradnik.lbc@gmail.com',
+      total_price: `${calculatedPrice.toLocaleString()} Kč`,
+      service_type: formData.serviceType,
+      frequency: formData.serviceType === 'pravidelná' ? formData.frequency : 'Jednorázová',
+      date: formData.date || 'Nespecifikováno',
+      psc: formData.psc || 'Nespecifikováno',
+      message: formData.message || 'Bez zprávy',
+      price_breakdown: priceBreakdown.map(item => `${item.label}: ${item.price.toLocaleString()} Kč`).join('\n')
+    };
+
+    try {
+      await emailjs.send(
+        'service_q9pfyvh',
+        'template_n389n7r',
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+      setSubmitStatus('success');
+      // Reset form after success
+      setTimeout(() => {
+        setView('main');
+        setSubmitStatus('idle');
+        setFormData({
+          ...formData,
+          name: '',
+          email: '',
+          message: '',
+          items: [
+            { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false },
+          ]
+        });
+      }, 3000);
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -383,7 +485,7 @@ export default function App() {
             </div>
 
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-stone-100">
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-bold text-stone-900">1. Vyberte služby</h3>
@@ -670,11 +772,39 @@ export default function App() {
 
                   <button 
                     id="submit-calc"
-                    className="w-full bg-brand-500 text-white py-6 rounded-3xl font-bold text-xl hover:bg-brand-600 transition-all hover:shadow-2xl hover:shadow-brand-500/20 active:scale-[0.98] flex items-center justify-center gap-3"
+                    type="submit"
+                    disabled={isSubmitting || submitStatus === 'success'}
+                    className={cn(
+                      "w-full py-6 rounded-3xl font-bold text-xl transition-all flex items-center justify-center gap-3",
+                      submitStatus === 'success' 
+                        ? "bg-green-500 text-white cursor-default" 
+                        : "bg-brand-500 text-white hover:bg-brand-600 hover:shadow-2xl hover:shadow-brand-500/20 active:scale-[0.98]",
+                      isSubmitting && "opacity-70 cursor-wait"
+                    )}
                   >
-                    Odeslat poptávku z kalkulačky
-                    <ArrowRight size={24} />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="animate-spin" size={24} />
+                        Odesílám...
+                      </>
+                    ) : submitStatus === 'success' ? (
+                      <>
+                        <Check size={24} />
+                        Poptávka odeslána!
+                      </>
+                    ) : (
+                      <>
+                        Odeslat poptávku z kalkulačky
+                        <ArrowRight size={24} />
+                      </>
+                    )}
                   </button>
+                  {submitStatus === 'error' && (
+                    <div className="mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-sm font-bold">
+                      <AlertCircle size={20} />
+                      Něco se nepovedlo. Zkuste to prosím znovu nebo nás kontaktujte přímo.
+                    </div>
+                  )}
                   <p className="text-center text-stone-500 font-medium text-sm mt-4">
                     Cenovou nabídku vám pošleme na váš zadaný e-mail.
                   </p>
@@ -712,6 +842,102 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans selection:bg-brand-200 selection:text-brand-900">
+      {/* Service Detail Modal */}
+      <AnimatePresence>
+        {selectedService && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedService(null)}
+              className="absolute inset-0 bg-stone-900/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 40 }}
+              className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:max-h-[80vh]"
+            >
+              <button 
+                onClick={() => setSelectedService(null)}
+                className="absolute top-6 right-6 z-10 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition-all text-white md:text-stone-500 md:bg-stone-100 md:hover:bg-stone-200"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="w-full md:w-1/2 h-64 md:h-auto relative">
+                <img 
+                  src={selectedService.image} 
+                  alt={selectedService.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 to-transparent md:hidden" />
+                <div className="absolute bottom-6 left-6 md:hidden">
+                  <h3 className="text-3xl font-bold text-white mb-2">{selectedService.title}</h3>
+                  <span className="text-brand-400 font-bold bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-sm">
+                    {selectedService.price}
+                  </span>
+                </div>
+              </div>
+
+              <div className="w-full md:w-1/2 p-8 md:p-12 overflow-y-auto flex flex-col">
+                <div className="hidden md:block mb-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-brand-100 text-brand-500 rounded-xl flex items-center justify-center">
+                      <selectedService.icon size={24} />
+                    </div>
+                    <span className="text-sm font-bold text-brand-600 bg-brand-100 px-3 py-1 rounded-full">
+                      {selectedService.price}
+                    </span>
+                  </div>
+                  <h3 className="text-4xl font-bold text-stone-900">{selectedService.title}</h3>
+                </div>
+
+                <div className="space-y-8">
+                  <section>
+                    <h4 className="text-stone-900 font-bold text-lg mb-3 flex items-center gap-2">
+                      <Info size={20} className="text-brand-500" />
+                      O službě
+                    </h4>
+                    <p className="text-stone-600 leading-relaxed font-medium">
+                      {selectedService.longDescription}
+                    </p>
+                  </section>
+
+                  <section>
+                    <h4 className="text-stone-900 font-bold text-lg mb-4 flex items-center gap-2">
+                      <Calculator size={20} className="text-brand-500" />
+                      Ceník podrobně
+                    </h4>
+                    <div className="bg-stone-50 rounded-2xl p-6 space-y-4">
+                      {selectedService.detailedPrices.map((price: any, i: number) => (
+                        <div key={i} className="flex justify-between items-center border-b border-stone-200 pb-3 last:border-0 last:pb-0">
+                          <span className="text-sm font-medium text-stone-600">{price.name}</span>
+                          <span className="font-bold text-brand-600">{price.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <div className="pt-4">
+                    <a 
+                      href="#kontakt"
+                      onClick={() => setSelectedService(null)}
+                      className="w-full bg-brand-500 text-white py-5 rounded-2xl font-bold text-lg hover:bg-brand-600 transition-all shadow-xl shadow-brand-500/20 flex items-center justify-center gap-3 group"
+                    >
+                      Poptat tuto službu
+                      <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Modals for Privacy and Terms */}
       <AnimatePresence>
         {activeModal && (
@@ -745,7 +971,7 @@ export default function App() {
                   <>
                     <section>
                       <h4 className="text-stone-900 font-bold mb-2">1. Správce údajů</h4>
-                      <p>Správcem vašich osobních údajů je subjekt Zahrady LBC, IČO: 23217375, se sídlem v Libereckém kraji. Kontaktní e-mail: zahradnik.lbc@gmail.com.</p>
+                      <p>Správcem vašich osobních údajů je subjekt Zahrady LBC, IČO: 23217375, se sídlem v Liberci. Kontaktní e-mail: zahradnik.lbc@gmail.com.</p>
                     </section>
                     <section>
                       <h4 className="text-stone-900 font-bold mb-2">2. Rozsah zpracování</h4>
@@ -805,15 +1031,18 @@ export default function App() {
       {/* Navigation */}
       <nav className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4",
-        scrolled ? "glass shadow-sm py-3" : "bg-white/10 backdrop-blur-[2px] border-b border-white/5"
+        scrolled ? "glass shadow-sm py-3" : "bg-transparent border-b border-white/5"
       )}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <a href="#o-nás" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 bg-brand-400 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-400/20">
               <Leaf size={24} />
             </div>
-            <span className="text-xl font-bold tracking-tight text-stone-900 drop-shadow-[0_2px_2px_rgba(255,255,255,1)]">
-              Zahrady <span className="text-brand-500">LBC</span>
+            <span className={cn(
+              "text-xl font-bold tracking-tight transition-colors",
+              scrolled ? "text-stone-900" : "text-stone-900"
+            )}>
+              Zahrady <span className="text-brand-400 text-outline-sm">LBC</span>
             </span>
           </a>
 
@@ -823,14 +1052,20 @@ export default function App() {
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().replace(' ', '-')}`}
-                className="text-sm font-bold text-stone-900 hover:text-brand-600 transition-colors drop-shadow-[0_2px_2px_rgba(255,255,255,1)]"
+                className={cn(
+                  "text-sm font-bold transition-colors",
+                  scrolled ? "text-stone-900 hover:text-brand-600" : "text-white hover:text-brand-300 drop-shadow-md"
+                )}
               >
                 {item}
               </a>
             ))}
             <a 
               href="#kontakt"
-              className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors drop-shadow-[0_2px_2px_rgba(255,255,255,1)]"
+              className={cn(
+                "text-sm font-bold transition-colors",
+                scrolled ? "text-brand-600 hover:text-brand-700" : "text-brand-400 hover:text-brand-300 drop-shadow-md"
+              )}
             >
               Poptat údržbu
             </a>
@@ -844,7 +1079,10 @@ export default function App() {
 
           {/* Mobile Toggle */}
           <button 
-            className="md:hidden p-2 text-stone-900"
+            className={cn(
+              "md:hidden p-2 transition-colors",
+              scrolled ? "text-stone-900" : "text-white"
+            )}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X /> : <Menu />}
@@ -899,24 +1137,25 @@ export default function App() {
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div 
             animate={{ 
-              scale: [1, 1.15],
+              scale: [1, 1.25],
+              rotate: [0, 1, 0],
             }}
             transition={{ 
-              duration: 30, 
+              duration: 20, 
               repeat: Infinity, 
               repeatType: "reverse",
-              ease: "linear" 
+              ease: "easeInOut" 
             }}
             className="absolute inset-0"
           >
             <img 
               src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=2000" 
               alt="Zelená zahrada" 
-              className="w-full h-full object-cover opacity-85"
+              className="w-full h-full object-cover opacity-70"
               referrerPolicy="no-referrer"
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-b from-stone-50/40 via-stone-50/20 to-stone-50" />
+          <div className="absolute inset-0 bg-gradient-to-b from-stone-950/60 via-stone-950/40 to-stone-50" />
           
           {/* Floating leaves/greenery */}
           <motion.div 
@@ -944,21 +1183,21 @@ export default function App() {
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-6">
                 <span className="w-2 h-2 rounded-full bg-brand-400 animate-ping" />
-                Liberecký kraj
+                Liberec a okolí
               </div>
-              <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] text-stone-900 mb-6 tracking-tight drop-shadow-md">
-                <span className="drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]">
-                  Zahrady <span className="text-brand-500 drop-shadow-[0_0_12px_rgba(255,255,255,1)] drop-shadow-[0_0_5px_rgba(255,255,255,1)]">LBC</span>
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 tracking-tight">
+                <span className="text-stone-900 drop-shadow-[0_0_40px_rgba(255,255,255,0.9)] drop-shadow-[0_0_20px_rgba(255,255,255,0.7)] drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                  Zahrady <span className="text-brand-400 text-outline-sm drop-shadow-[0_0_25px_rgba(115,209,61,0.6)]">LBC</span>
                 </span>
                 <br />
-                <span className="text-2xl md:text-4xl text-stone-700 font-semibold block mt-3 drop-shadow-sm">
+                <span className="text-2xl md:text-4xl text-brand-500 font-semibold block mt-4 text-outline-sm drop-shadow-md">
                   Péče o vaši zeleň
                 </span>
               </h1>
-              <p className="text-lg text-stone-600 mb-8 max-w-lg leading-relaxed font-medium drop-shadow-md">
+              <p className="text-lg text-brand-100 mb-8 max-w-lg leading-relaxed font-medium drop-shadow-lg text-outline-sm">
                 Údržba zeleně pro firmy, SVJ i soukromé zahrady.
                 <br />
-                Jednorázově i pravidelně v celém Libereckém kraji.
+                Jednorázově i pravidelně v Liberci, Jablonci, Turnově a širokém okolí.
               </p>
               <div className="flex flex-wrap gap-4">
                 <a 
@@ -1015,7 +1254,8 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.05 }}
-                className="bg-stone-50 p-8 rounded-3xl border border-stone-100 hover:border-brand-200 hover:bg-white hover:shadow-xl hover:shadow-brand-500/5 transition-all group"
+                onClick={() => setSelectedService(service)}
+                className="bg-stone-50 p-8 rounded-3xl border border-stone-100 hover:border-brand-200 hover:bg-white hover:shadow-xl hover:shadow-brand-500/5 transition-all group cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-6">
                   <div className="w-12 h-12 bg-white text-brand-500 rounded-xl flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors shadow-sm">
@@ -1026,9 +1266,12 @@ export default function App() {
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-stone-900 mb-3">{service.title}</h3>
-                <p className="text-stone-600 text-sm leading-relaxed font-medium">
+                <p className="text-stone-600 text-sm leading-relaxed font-medium mb-4">
                   {service.description}
                 </p>
+                <div className="flex items-center gap-2 text-brand-600 text-xs font-bold uppercase tracking-wider group-hover:gap-3 transition-all">
+                  Více informací <ArrowRight size={14} />
+                </div>
               </motion.div>
             ))}
           </div>
@@ -1157,7 +1400,7 @@ export default function App() {
                   </div>
                   <div>
                     <p className="text-stone-300 text-[10px] font-bold uppercase tracking-widest">Působnost</p>
-                    <p className="text-lg font-bold">Liberecký kraj</p>
+                    <p className="text-lg font-bold">Liberec, Jablonec nad Nisou, Turnov a široké okolí</p>
                   </div>
                 </div>
 
@@ -1190,12 +1433,12 @@ export default function App() {
       {/* Footer */}
       <footer className="bg-stone-50 text-stone-500 py-6 px-6 border-t border-stone-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <a href="#o-nás" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white">
+          <a href="#o-nás" className="flex items-center gap-2 hover:opacity-80 transition-opacity group">
+            <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white shadow-sm">
               <Leaf size={18} />
             </div>
-            <span className="text-lg font-bold text-stone-900">
-              Zahrady <span className="text-brand-500">LBC</span>
+            <span className="text-lg font-bold text-stone-900 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">
+              Zahrady <span className="text-brand-400 text-outline-sm">LBC</span>
             </span>
           </a>
           
@@ -1203,7 +1446,7 @@ export default function App() {
             <p className="text-sm font-medium">
               © {new Date().getFullYear()} Zahrady LBC | IČO: 23217375
             </p>
-            <p className="text-xs mt-1">Profesionální údržba zeleně v Libereckém kraji</p>
+            <p className="text-xs mt-1">Údržba zeleně v Liberci, Jablonci, Turnově a okolí</p>
           </div>
           
           <div className="flex gap-8 text-xs font-bold uppercase tracking-widest">
