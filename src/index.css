@@ -52,3 +52,13 @@
 .animate-float {
   animation: slow-float 10s ease-in-out infinite;
 }
+
+.text-outline-sm {
+  text-shadow: 
+    -1px -1px 0 rgba(0,0,0,0.3),  
+     1px -1px 0 rgba(0,0,0,0.3),
+    -1px  1px 0 rgba(0,0,0,0.3),
+     1px  1px 0 rgba(0,0,0,0.3);
+}
+
+
