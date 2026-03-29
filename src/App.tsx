@@ -1145,11 +1145,10 @@ export default function App() {
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div 
             animate={{ 
-              scale: [1, 1.25],
-              rotate: [0, 1, 0],
+              scale: [1, 1.15],
             }}
             transition={{ 
-              duration: 20, 
+              duration: 15, 
               repeat: Infinity, 
               repeatType: "reverse",
               ease: "easeInOut" 
@@ -1159,26 +1158,27 @@ export default function App() {
             <img 
               src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=2000" 
               alt="Zelená zahrada" 
-              className="w-full h-full object-cover opacity-70"
+              className="w-full h-full object-cover opacity-85"
               referrerPolicy="no-referrer"
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-b from-stone-950/60 via-stone-950/40 to-stone-50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-transparent to-white/30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-stone-50/40" />
           
           {/* Floating leaves/greenery */}
           <motion.div 
             animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
             transition={{ duration: 8, repeat: Infinity }}
-            className="absolute top-1/4 right-10 text-brand-200 opacity-50 hidden lg:block"
+            className="absolute top-1/4 -right-4 md:right-10 text-brand-200 opacity-20 md:opacity-40"
           >
-            <Leaf size={120} />
+            <Leaf className="w-16 h-16 md:w-24 lg:w-32" />
           </motion.div>
           <motion.div 
             animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
             transition={{ duration: 10, repeat: Infinity }}
-            className="absolute bottom-1/4 left-10 text-brand-200 opacity-50 hidden lg:block"
+            className="absolute bottom-1/4 -left-4 md:left-10 text-brand-200 opacity-20 md:opacity-40"
           >
-            <Trees size={160} />
+            <Trees className="w-20 h-20 md:w-32 lg:w-40" />
           </motion.div>
         </div>
 
@@ -1202,7 +1202,7 @@ export default function App() {
                   Péče o vaši zeleň
                 </span>
               </h1>
-              <p className="text-lg text-brand-100 mb-8 max-w-lg leading-relaxed font-medium drop-shadow-lg text-outline-sm">
+              <p className="text-lg text-stone-900 mb-8 max-w-lg leading-relaxed font-bold drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
                 Údržba zeleně pro firmy, SVJ i soukromé zahrady.
                 <br />
                 Jednorázově i pravidelně v Liberci, Jablonci, Turnově a širokém okolí.
