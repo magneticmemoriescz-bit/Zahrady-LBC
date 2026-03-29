@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import emailjs from '@emailjs/browser';
+import { send } from '@emailjs/browser';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -413,7 +413,7 @@ export default function App() {
     };
 
     try {
-      await emailjs.send(
+      await send(
         'service_q9pfyvh',
         'template_n389n7r',
         templateParams,
