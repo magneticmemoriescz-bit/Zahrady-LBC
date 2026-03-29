@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { send } from '@emailjs/browser';
+import emailjs from '@emailjs/browser';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -412,12 +412,20 @@ export default function App() {
       price_breakdown: priceBreakdown.map(item => `${item.label}: ${item.price.toLocaleString()} Kč`).join('\n')
     };
 
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'sVd3x5rH1tZu6JGUR';
+
+    if (!publicKey) {
+      console.error('EmailJS Public Key is missing!');
+      setSubmitStatus('error');
+      return;
+    }
+
     try {
-      await send(
+      await emailjs.send(
         'service_q9pfyvh',
         'template_n389n7r',
         templateParams,
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        publicKey
       );
       setSubmitStatus('success');
       // Reset form after success
