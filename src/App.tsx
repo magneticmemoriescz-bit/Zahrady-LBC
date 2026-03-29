@@ -1198,11 +1198,11 @@ export default function App() {
                   Zahrady <span className="text-brand-400 text-outline-sm drop-shadow-[0_0_25px_rgba(115,209,61,0.6)]">LBC</span>
                 </span>
                 <br />
-                <span className="text-2xl md:text-4xl text-brand-500 font-semibold block mt-4 text-outline-sm drop-shadow-md">
+                <span className="text-2xl md:text-4xl text-brand-400 text-outline-sm font-semibold block mt-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
                   Péče o vaši zeleň
                 </span>
               </h1>
-              <p className="text-lg text-stone-900 mb-8 max-w-lg leading-relaxed font-bold drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
+              <p className="text-lg text-brand-100 text-outline-sm mb-8 max-w-lg leading-relaxed font-bold drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
                 Údržba zeleně pro firmy, SVJ i soukromé zahrady.
                 <br />
                 Jednorázově i pravidelně v Liberci, Jablonci, Turnově a širokém okolí.
