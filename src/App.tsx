@@ -1433,9 +1433,51 @@ export default function App() {
                 onClick={() => setView('calculator')}
                 className="bg-brand-500 text-white px-8 py-6 rounded-2xl font-bold text-lg hover:bg-brand-600 transition-all hover:shadow-xl hover:shadow-brand-500/20 active:scale-[0.98] flex items-center gap-4 group max-w-md leading-tight"
               >
-                <span>Získejte cenovou nabídku ihned díky naší cenové kalkulačce</span>
+                <span>Získejte cenovou nabídku ihned</span>
                 <ArrowRight className="shrink-0 group-hover:translate-x-1 transition-transform" />
               </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Service Area / SEO Section */}
+      <section className="py-16 bg-white border-t border-stone-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 p-8 md:p-12 rounded-[2.5rem] bg-brand-50 border border-brand-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 opacity-5 -rotate-12 translate-x-1/4 -translate-y-1/4">
+              <MapPin size={240} />
+            </div>
+            
+            <div className="max-w-2xl relative z-10 text-center md:text-left">
+              <h2 className="text-2xl md:text-3xl font-bold text-stone-900 mb-4 tracking-tight">Kde se o vaši zahradu postaráme?</h2>
+              <p className="text-stone-600 font-medium leading-relaxed mb-6">
+                Své služby v oblasti údržby zeleně a zimního posypu poskytujeme v celém Libereckém kraji a části Středočeského kraje.
+              </p>
+              <div className="flex flex-wrap justify-center md:justify-start gap-2">
+                {[
+                  "Liberec", "Jablonec nad Nisou", "Turnov", "Hodkovice nad Mohelkou", 
+                  "Chrastava", "Hrádek nad Nisou", "Frýdlant", "Dlouhý Most", 
+                  "Šimonovice", "Jeřmanice", "Rádlo", "Rychnov", "Vratislavice", 
+                  "Mníšek", "Stráž nad Nisou", "Janov nad Nisou", "Bedřichov", 
+                  "Malá Skála", "Frýdštejn", "Sychrov", "Jenišovice", "Ohrazenice"
+                ].map(city => (
+                  <span key={city} className="bg-white px-3 py-1 rounded-full text-xs font-bold text-brand-600 border border-brand-200 shadow-sm">
+                    {city}
+                  </span>
+                ))}
+                <span className="text-brand-500 text-xs font-bold py-1">...a široké okolí</span>
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 relative z-10 w-full md:w-auto">
+              <a 
+                href="#kontakt"
+                className="inline-flex items-center justify-center w-full md:w-auto gap-2 bg-stone-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10"
+              >
+                Poptat realizaci v mé obci
+                <ChevronRight size={20} />
+              </a>
             </div>
           </div>
         </div>
