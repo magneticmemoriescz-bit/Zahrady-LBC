@@ -4,10 +4,10 @@
 @theme {
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
   
-  --color-brand-50: #f7fee7;
-  --color-brand-100: #ecfccb;
-  --color-brand-200: #dcfce7;
-  --color-brand-300: #bef264;
+  --color-brand-50: #f4fcf0;
+  --color-brand-100: #e9f9e1;
+  --color-brand-200: #d3f3c3;
+  --color-brand-300: #bdf0a5;
   --color-brand-400: #73d13d;
   --color-brand-500: #52c41a;
   --color-brand-600: #389e0d;
@@ -55,9 +55,26 @@
 
 .text-outline-sm {
   text-shadow: 
-    -1px -1px 0 rgba(0,0,0,0.3),  
-     1px -1px 0 rgba(0,0,0,0.3),
-    -1px  1px 0 rgba(0,0,0,0.3),
-     1px  1px 0 rgba(0,0,0,0.3);
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0px -1px 0 #000,
+     0px  1px 0 #000,
+    -1px  0px 0 #000,
+     1px  0px 0 #000;
 }
+
+.text-outline-white {
+  text-shadow: 
+    -1px -1px 0 #fff,  
+     1px -1px 0 #fff,
+    -1px  1px 0 #fff,
+     1px  1px 0 #fff,
+     0px -1px 0 #fff,
+     0px  1px 0 #fff,
+    -1px  0px 0 #fff,
+     1px  0px 0 #fff;
+}
+
 
