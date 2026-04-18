@@ -49,7 +49,9 @@ const services = [
     detailedPrices: [
       { name: "Sekačkou bez sběru (do 10 cm)", price: "2 Kč/m²" },
       { name: "Sekačkou se sběrem (do 10 cm)", price: "2,5 Kč/m²" },
-      { name: "Vysoká tráva (10–15 cm) se sběrem", price: "6 Kč/m²" },
+      { name: "Vysoká tráva (10–15 cm) se sběrem", price: "5 Kč/m²" },
+      { name: "Vysoká tráva (15–20 cm) se sběrem", price: "8,5 Kč/m²" },
+      { name: "Hrabání trávy", price: "6 Kč/m²" },
       { name: "Křovinořez (do 25 cm) bez sběru", price: "6 Kč/m²" }
     ]
   },
@@ -105,13 +107,13 @@ const services = [
   },
   {
     title: "Zimní údržba",
-    description: "Údržba zpevněných ploch posypovou solí či štěrkem. Zajištění bezpečného pohybu v zimním období.",
+    description: "Posyp zpevněných ploch posypovou solí či štěrkem. Zajištění bezpečného pohybu v zimním období.",
     longDescription: "Zajišťujeme sjízdnost a schůdnost chodníků, parkovišť a příjezdových cest. Provádíme posyp solí nebo inertním materiálem. Služba je dostupná pro firmy, SVJ i soukromé osoby v Liberci a okolí.",
     icon: Snowflake,
     price: "900 Kč/h",
     image: "https://images.pexels.com/photos/15921627/pexels-photo-15921627.jpeg?auto=compress&cs=tinysrgb&w=800",
     detailedPrices: [
-      { name: "Zimní údržba (strojní)", price: "900 Kč/motohodina" },
+      { name: "Zimní posyp (strojní)", price: "900 Kč/motohodina" },
       { name: "Posypový materiál", price: "dle spotřeby" }
     ]
   }
@@ -142,13 +144,13 @@ const pricingData = [
   { category: "Trávníky", icon: Leaf, items: [
     { name: "Sekání trávy sekačkou bez sběru | do 10 cm", price: "2 Kč / m²" },
     { name: "Sekání trávy sekačkou se sběrem | do 10 cm", price: "2,5 Kč / m²" },
-    { name: "Sekání trávy se sběrem | 10–15 cm", price: "6 Kč / m²" },
-    { name: "Sekání trávy se sběrem | 15–20 cm", price: "9 Kč / m²" },
-    { name: "Mulčování vysoké trávy | 50–80 cm", price: "6 Kč / m²" },
+    { name: "Sekání trávy se sběrem | 10–15 cm", price: "5 Kč / m²" },
+    { name: "Sekání trávy se sběrem | 15–20 cm", price: "8,5 Kč / m²" },
     { name: "Sekání trávy ve svahu | příplatek", price: "+2 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | do 25 cm", price: "6 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | 30–50 cm", price: "9 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | 50–100 cm", price: "16 Kč / m²" },
+    { name: "Hrabání trávy", price: "6 Kč / m²" },
     { name: "Vertikutace / vyčesání trávníku", price: "9 Kč / m²" },
     { name: "Oprava trávníku | (zemina + osivo)", price: "25 Kč / m²" },
   ]},
@@ -164,10 +166,10 @@ const pricingData = [
     { name: "Práce ve svahu | příplatek", price: "+200 Kč / hod" },
   ]},
   { category: "Ostatní", icon: Snowflake, items: [
-    { name: "Doprava", price: "12 Kč / km | (z Dlouhého Mostu)" },
+    { name: "Doprava", price: "12 Kč / km | (z Liberce)" },
     { name: "Hrabání listí", price: "6 Kč / m²" },
     { name: "Odvoz bioodpadu", price: "450 Kč / m³" },
-    { name: "Zimní údržba | (motorizovaný posyp solí nebo štěrkem)", price: "900 Kč / motohodina | (+ materiál)" },
+    { name: "Zimní posyp | (motorizovaný posyp solí nebo štěrkem)", price: "900 Kč / motohodina | (+ materiál)" },
   ]}
 ];
 
@@ -189,8 +191,9 @@ const SERVICE_CONFIG: Record<string, {
     subOptions: [
       { label: "Sekačkou bez sběru (do 10 cm)", price: 2 },
       { label: "Sekačkou se sběrem (do 10 cm)", price: 2.5 },
-      { label: "Vysoká tráva (10–15 cm) se sběrem", price: 6 },
-      { label: "Vysoká tráva (15–20 cm) se sběrem", price: 9 },
+      { label: "Vysoká tráva (10–15 cm) se sběrem", price: 5 },
+      { label: "Vysoká tráva (15–20 cm) se sběrem", price: 8.5 },
+      { label: "Hrabání trávy", price: 6 },
       { label: "Křovinořez (do 25 cm) bez sběru", price: 6 },
       { label: "Křovinořez (30–50 cm) bez sběru", price: 9 },
       { label: "Křovinořez (50–100 cm) bez sběru", price: 16 },
@@ -1050,7 +1053,7 @@ export default function App() {
               "text-xl font-bold tracking-tight transition-colors",
               scrolled ? "text-stone-900" : "text-stone-900"
             )}>
-              Zahrady <span className="text-brand-400 text-outline-sm">LBC</span>
+              Zahrady <span className="text-brand-400">LBC</span>
             </span>
           </a>
 
@@ -1167,18 +1170,18 @@ export default function App() {
           
           {/* Floating leaves/greenery */}
           <motion.div 
-            animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
-            transition={{ duration: 8, repeat: Infinity }}
-            className="absolute top-1/4 -right-4 md:right-10 text-brand-200 opacity-20 md:opacity-40"
+            animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[8%] right-[2%] md:right-[5%] text-brand-400 opacity-30 md:opacity-50 z-0"
           >
-            <Leaf className="w-16 h-16 md:w-24 lg:w-32" />
+            <Leaf className="w-10 h-10 md:w-20 lg:w-32 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
           </motion.div>
           <motion.div 
-            animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
-            transition={{ duration: 10, repeat: Infinity }}
-            className="absolute bottom-1/4 -left-4 md:left-10 text-brand-200 opacity-20 md:opacity-40"
+            animate={{ y: [0, 30, 0], rotate: [0, -15, 0] }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-[5%] left-[2%] md:left-[5%] text-brand-400 opacity-30 md:opacity-50 z-0"
           >
-            <Trees className="w-20 h-20 md:w-32 lg:w-40" />
+            <Trees className="w-14 h-14 md:w-28 lg:w-40 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
           </motion.div>
         </div>
 
@@ -1194,15 +1197,15 @@ export default function App() {
                 Liberec a okolí
               </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 tracking-tight">
-                <span className="text-stone-900 drop-shadow-[0_0_40px_rgba(255,255,255,0.9)] drop-shadow-[0_0_20px_rgba(255,255,255,0.7)] drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-                  Zahrady <span className="text-brand-400 text-outline-sm drop-shadow-[0_0_25px_rgba(115,209,61,0.6)]">LBC</span>
+                <span className="text-stone-900">
+                  Zahrady <span className="text-brand-400 text-outline-sm">LBC</span>
                 </span>
                 <br />
-                <span className="text-2xl md:text-4xl text-brand-400 text-outline-sm font-semibold block mt-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+                <span className="text-2xl md:text-4xl text-brand-400 text-outline-sm font-semibold block mt-4">
                   Péče o vaši zeleň
                 </span>
               </h1>
-              <p className="text-lg text-brand-100 text-outline-sm mb-8 max-w-lg leading-relaxed font-bold drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+              <p className="text-lg text-brand-100 text-outline-sm mb-8 max-w-lg leading-relaxed font-bold">
                 Údržba zeleně pro firmy, SVJ i soukromé zahrady.
                 <br />
                 Jednorázově i pravidelně v Liberci, Jablonci, Turnově a širokém okolí.
@@ -1219,7 +1222,7 @@ export default function App() {
             </motion.div>
 
             {/* Target groups visible immediately */}
-            <div className="grid gap-4">
+            <div className="grid gap-4 justify-self-end w-full max-w-[480px] lg:translate-x-4">
               {specializations.map((spec, idx) => (
                 <motion.div
                   key={spec.title}
@@ -1229,11 +1232,11 @@ export default function App() {
                   className="glass p-5 rounded-2xl flex items-center gap-5 hover:border-brand-300 transition-all group cursor-default"
                 >
                   <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", spec.color)}>
-                    <spec.icon size={28} />
+                    <spec.icon size={26} />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-stone-900">{spec.title}</h3>
-                    <p className="text-sm text-stone-600 font-medium">{spec.description}</p>
+                    <p className="text-sm text-stone-600 font-medium leading-relaxed">{spec.description}</p>
                   </div>
                 </motion.div>
               ))}
