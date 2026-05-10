@@ -56,15 +56,18 @@ const services = [
     ]
   },
   {
-    title: "Střih keřů a živých plotů",
-    description: "Tvarování a zmlazování živých plotů a okrasných dřevin pro dokonalý vzhled vaší zahrady.",
-    longDescription: "Provádíme řez okrasných dřevin, tvarování živých plotů i zmlazovací řezy starších keřů. Práce provádíme s důrazem na zdraví rostlin a estetický výsledek.",
+    title: "Střih keřů, plotů a stromů",
+    description: "Tvarování živých plotů, řez okrasných dřevin i prořez stromů.",
+    longDescription: "Zajišťujeme kompletní péči o dřeviny ve vaší zahradě. Od pravidelného střihu a tvarování živých plotů přes zmlazování keřů až po prořez ovocných a okrasných stromů pro jejich zdraví a bohatou úrodu. Práce nad 2 metry provádíme bezpečně ze žebříku.",
     icon: Trees,
     price: "od 60 Kč/m",
     image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=800",
     detailedPrices: [
       { name: "Nižší keře a ploty (do 2 m)", price: "60 Kč/m" },
-      { name: "Vyšší ploty (nad 2 m) - ze žebříku", price: "120 Kč/m" },
+      { name: "Vyšší keře a živé ploty (nad 2 m)", price: "120 Kč/m" },
+      { name: "Samostatné keře (solitérní)", price: "250 Kč/ks" },
+      { name: "Stromy (ovocné a mladší)", price: "900 Kč/ks" },
+      { name: "Stromy (starší / velký prořez)", price: "2500 Kč/ks" },
       { name: "Práce ve svahu (příplatek)", price: "+15 Kč/m" }
     ]
   },
@@ -160,9 +163,12 @@ const pricingData = [
     { name: "Doplnění zeminy", price: "800 Kč / hod | (+materiál)" },
     { name: "Výsadba", price: "800 Kč / hod | (+materiál)" },
   ]},
-  { category: "Střih keřů a živých plotů", icon: Trees, items: [
+  { category: "Střih keřů, plotů a stromů", icon: Trees, items: [
     { name: "Střih nižších keřů a plotů | do 2 m", price: "60 Kč / m" },
-    { name: "Střih vyšších plotů | nad 2 m", price: "120 Kč / m" },
+    { name: "Střih vyšších keřů a živých plotů | nad 2 m", price: "120 Kč / m" },
+    { name: "Střih samostatných keřů | solitérní", price: "250 Kč / ks" },
+    { name: "Prořez ovocných a mladších stromů", price: "900 Kč / ks" },
+    { name: "Prořez starších stromů / rozsáhlý", price: "2500 Kč / ks" },
     { name: "Práce ve svahu | příplatek", price: "+15 Kč / m" },
   ]},
   { category: "Ostatní", icon: Snowflake, items: [
@@ -199,15 +205,18 @@ const SERVICE_CONFIG: Record<string, {
       { label: "Křovinořez (50–100 cm) bez sběru", price: 16 },
     ]
   },
-  "Střih keřů a živých plotů": {
-    unit: "m",
+  "Střih keřů, plotů a stromů": {
+    unit: "m / ks",
     basePrice: 60,
     hasSlope: true,
     slopeSurcharge: 15,
-    bioWasteFactor: 0.02,
+    bioWasteFactor: 0.05,
     subOptions: [
       { label: "Nižší keře a ploty (do 2 m)", price: 60 },
-      { label: "Vyšší ploty (nad 2 m) - ze žebříku", price: 120 },
+      { label: "Vyšší keře a živé ploty (nad 2 m)", price: 120 },
+      { label: "Samostatné keře (solitérní)", price: 250 },
+      { label: "Prořez ovocných a mladších stromů", price: 900 },
+      { label: "Prořez starších stromů / rozsáhlý", price: 2500 },
     ]
   },
   "Pletí a údržba záhonů": {
