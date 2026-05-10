@@ -60,12 +60,12 @@ const services = [
     description: "Tvarování a zmlazování živých plotů a okrasných dřevin pro dokonalý vzhled vaší zahrady.",
     longDescription: "Provádíme řez okrasných dřevin, tvarování živých plotů i zmlazovací řezy starších keřů. Práce provádíme s důrazem na zdraví rostlin a estetický výsledek.",
     icon: Trees,
-    price: "od 800 Kč/hod",
+    price: "od 60 Kč/m",
     image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=800",
     detailedPrices: [
-      { name: "Nižší keře (do 2 m)", price: "800 Kč/hod" },
-      { name: "Vyšší keře a stromy", price: "1200 Kč/hod" },
-      { name: "Práce ve svahu (příplatek)", price: "+200 Kč/hod" }
+      { name: "Nižší keře a ploty (do 2 m)", price: "60 Kč/m" },
+      { name: "Vyšší ploty (nad 2 m) - ze žebříku", price: "120 Kč/m" },
+      { name: "Práce ve svahu (příplatek)", price: "+15 Kč/m" }
     ]
   },
   {
@@ -161,9 +161,9 @@ const pricingData = [
     { name: "Výsadba", price: "800 Kč / hod | (+materiál)" },
   ]},
   { category: "Střih keřů a živých plotů", icon: Trees, items: [
-    { name: "Prořez nižších keřů | do 2 m", price: "800 Kč / hod" },
-    { name: "Prořez vyšších keřů a stromů", price: "1200 Kč / hod" },
-    { name: "Práce ve svahu | příplatek", price: "+200 Kč / hod" },
+    { name: "Střih nižších keřů a plotů | do 2 m", price: "60 Kč / m" },
+    { name: "Střih vyšších plotů | nad 2 m", price: "120 Kč / m" },
+    { name: "Práce ve svahu | příplatek", price: "+15 Kč / m" },
   ]},
   { category: "Ostatní", icon: Snowflake, items: [
     { name: "Doprava", price: "12 Kč / km | (z Liberce)" },
@@ -200,14 +200,14 @@ const SERVICE_CONFIG: Record<string, {
     ]
   },
   "Střih keřů a živých plotů": {
-    unit: "hod",
-    basePrice: 800,
+    unit: "m",
+    basePrice: 60,
     hasSlope: true,
-    slopeSurcharge: 200,
-    bioWasteFactor: 0.15,
+    slopeSurcharge: 15,
+    bioWasteFactor: 0.02,
     subOptions: [
-      { label: "Nižší keře (do 2 m)", price: 800 },
-      { label: "Vyšší keře a stromy", price: 1200 },
+      { label: "Nižší keře a ploty (do 2 m)", price: 60 },
+      { label: "Vyšší ploty (nad 2 m) - ze žebříku", price: 120 },
     ]
   },
   "Pletí a údržba záhonů": {
