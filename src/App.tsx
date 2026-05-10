@@ -85,15 +85,20 @@ const services = [
     ]
   },
   {
-    title: "Vertikutace trávníku",
-    description: "Provzdušnění trávníku pro lepší příjem živin a vody. Nezbytné pro zdravý a hustý pažit.",
-    longDescription: "Vertikutace odstraňuje z trávníku plsť, mech a zbytky rostlin, které brání přístupu vzduchu, vody a živin ke kořenům. Doporučujeme provádět dvakrát ročně (jaro/podzim) pro udržení hustého a sytě zeleného trávníku bez mechu.",
+    title: "Péče o trávník",
+    description: "Komplexní péče pro zdravý a vitální pažit. Od provzdušnění po hnojení a pískování.",
+    longDescription: "Zajistíme vše potřebné pro váš trávník. Nabízíme vertikutaci pro odstranění plsti, pískování pro vylepšení struktury půdy, pletí plevelů i hnojení a dosev. Pravidelná péče zajistí, že váš trávník bude hustý, odolný a sytě zelený.",
     icon: CheckCircle2,
-    price: "9 Kč/m²",
+    price: "od 7 Kč/m²",
     image: "https://images.pexels.com/photos/12932883/pexels-photo-12932883.jpeg?auto=compress&cs=tinysrgb&w=800",
     detailedPrices: [
+      { name: "Komplet balíček (včetně veškerého materiálu: vertikutace, pískování, topdressing, hnojení, dosev)", price: "135 Kč/m²" },
       { name: "Vertikutace / vyčesání trávníku", price: "9 Kč/m²" },
-      { name: "Oprava trávníku (zemina + osivo)", price: "25 Kč/m²" }
+      { name: "Pískování trávníku (včetně písku)", price: "50 Kč/m²" },
+      { name: "Topdressing / substrát (včetně substrátu)", price: "50 Kč/m²" },
+      { name: "Dosev (včetně osiva)", price: "22 Kč/m²" },
+      { name: "Hnojení trávníku (včetně hnojiva)", price: "12 Kč/m²" },
+      { name: "Ruční pletí trávníku", price: "600 Kč/hod" }
     ]
   },
   {
@@ -154,7 +159,13 @@ const pricingData = [
     { name: "Sekání křovinořezem bez sběru | 30–50 cm", price: "9 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | 50–100 cm", price: "16 Kč / m²" },
     { name: "Hrabání trávy", price: "6 Kč / m²" },
+    { name: "Komplet péče o trávník | (včetně veškerého materiálu: vertikutace, pískování, topdressing, hnojení, dosev)", price: "135 Kč / m²" },
     { name: "Vertikutace / vyčesání trávníku", price: "9 Kč / m²" },
+    { name: "Pískování | (včetně písku)", price: "50 Kč / m²" },
+    { name: "Dosev | (včetně osiva)", price: "22 Kč / m²" },
+    { name: "Aplikace substrátu (topdressing) | (včetně substrátu)", price: "50 Kč / m²" },
+    { name: "Hnojení | (včetně hnojiva)", price: "12 Kč / m²" },
+    { name: "Ruční pletí trávníku (vypichování)", price: "600 Kč / hod" },
     { name: "Oprava trávníku | (zemina + osivo)", price: "25 Kč / m²" },
   ]},
   { category: "Záhon", icon: Flower2, items: [
@@ -232,10 +243,19 @@ const SERVICE_CONFIG: Record<string, {
     unit: "hod",
     basePrice: 800,
   },
-  "Vertikutace trávníku": {
+  "Péče o trávník": {
     unit: "m²",
     basePrice: 9,
     bioWasteFactor: 0.001,
+    subOptions: [
+      { label: "Komplet balíček (včetně veškerého materiálu: vertikutace, pískování, topdressing, hnojení, dosev)", price: 135 },
+      { label: "Vertikutace / vyčesání trávníku", price: 9 },
+      { label: "Pískování (včetně písku)", price: 50 },
+      { label: "Aplikace substrátu (včetně substrátu)", price: 50 },
+      { label: "Dosev (včetně osiva)", price: 22 },
+      { label: "Hnojení (včetně hnojiva)", price: 12 },
+      { label: "Ruční pletí trávníku (vypichování)", price: 600, unit: "hod" },
+    ]
   },
   "Úklid listí a bioodpadu": {
     unit: "m²",
@@ -810,9 +830,10 @@ export default function App() {
                       <div className="space-y-4">
                         <p className="text-xs font-bold uppercase tracking-[0.3em] text-stone-500 mb-4">Rozpis položek</p>
                         {priceBreakdown.map((item, i) => (
-                          <div key={i} className="flex justify-between items-center group">
+                          <div key={i} className="flex items-baseline gap-2 group">
                             <span className="text-base font-medium text-stone-300 group-hover:text-white transition-colors">{item.label}</span>
-                            <span className="font-bold text-brand-400 text-lg">{item.price.toLocaleString()} Kč</span>
+                            <div className="flex-grow border-b border-dotted border-stone-700/50 min-w-[20px]" />
+                            <span className="font-bold text-brand-400 text-lg whitespace-nowrap">{item.price.toLocaleString()} Kč</span>
                           </div>
                         ))}
                       </div>
@@ -962,9 +983,10 @@ export default function App() {
                     </h4>
                     <div className="bg-stone-50 rounded-2xl p-6 space-y-4">
                       {selectedService.detailedPrices.map((price: any, i: number) => (
-                        <div key={i} className="flex justify-between items-center border-b border-stone-200 pb-3 last:border-0 last:pb-0">
-                          <span className="text-base font-medium text-stone-600">{price.name}</span>
-                          <span className="font-bold text-brand-600 text-lg">{price.price}</span>
+                        <div key={i} className="flex items-baseline gap-2 border-b border-stone-200 pb-3 last:border-0 last:pb-0 shrink-0">
+                          <span className="text-base font-medium text-stone-600 leading-snug">{price.name}</span>
+                          <div className="flex-grow border-b border-dotted border-stone-300 min-w-[20px]" />
+                          <span className="font-bold text-brand-600 text-lg whitespace-nowrap">{price.price}</span>
                         </div>
                       ))}
                     </div>
@@ -1373,14 +1395,16 @@ export default function App() {
                           
                           return (
                             <div key={i} className="flex flex-col py-4 border-b border-stone-100 last:border-0 group hover:bg-brand-50/50 transition-colors px-2 -mx-2 rounded-lg">
-                              <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-baseline gap-2">
                                 <span className="text-base font-semibold text-stone-900 leading-snug">{mainName}</span>
-                                <span className="text-brand-600 font-bold text-base whitespace-nowrap text-right">{mainPrice}</span>
+                                <div className="flex-grow border-b border-dotted border-stone-300 min-w-[12px] opacity-50" />
+                                <span className="text-brand-600 font-bold text-base whitespace-nowrap text-right shrink-0">{mainPrice}</span>
                               </div>
                               {(subName || subPrice) && (
-                                <div className="flex justify-between items-start mt-1.5 gap-2">
+                                <div className="flex items-baseline gap-2 mt-1.5">
                                   <span className="text-sm text-stone-500 leading-tight italic">{subName || ''}</span>
-                                  <span className="text-sm text-brand-500 leading-tight italic text-right ml-auto">{subPrice || ''}</span>
+                                  <div className="flex-grow border-b border-dotted border-stone-200 min-w-[12px] opacity-40" />
+                                  <span className="text-sm text-brand-500 leading-tight italic text-right ml-auto shrink-0">{subPrice || ''}</span>
                                 </div>
                               )}
                             </div>
