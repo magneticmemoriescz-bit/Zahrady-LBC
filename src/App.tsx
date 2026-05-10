@@ -63,8 +63,8 @@ const services = [
     price: "od 60 Kč/m",
     image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=800",
     detailedPrices: [
-      { name: "Nižší keře a ploty (do 2 m)", price: "60 Kč/m" },
-      { name: "Vyšší keře a živé ploty (nad 2 m)", price: "120 Kč/m" },
+      { name: "Nižší živé ploty (do 2 m)", price: "60 Kč/m" },
+      { name: "Vyšší živé ploty (nad 2 m)", price: "120 Kč/m" },
       { name: "Samostatné keře (solitérní)", price: "250 Kč/ks" },
       { name: "Stromy (ovocné a mladší)", price: "900 Kč/ks" },
       { name: "Stromy (starší / velký prořez)", price: "2500 Kč/ks" },
@@ -164,8 +164,8 @@ const pricingData = [
     { name: "Výsadba", price: "800 Kč / hod | (+materiál)" },
   ]},
   { category: "Střih keřů, plotů a stromů", icon: Trees, items: [
-    { name: "Střih nižších keřů a plotů | do 2 m", price: "60 Kč / m" },
-    { name: "Střih vyšších keřů a živých plotů | nad 2 m", price: "120 Kč / m" },
+    { name: "Nižší živé ploty | do 2 m", price: "60 Kč / m" },
+    { name: "Vyšší živé ploty | nad 2 m", price: "120 Kč / m" },
     { name: "Střih samostatných keřů | solitérní", price: "250 Kč / ks" },
     { name: "Prořez ovocných a mladších stromů", price: "900 Kč / ks" },
     { name: "Prořez starších stromů / rozsáhlý", price: "2500 Kč / ks" },
@@ -182,7 +182,7 @@ const pricingData = [
 const SERVICE_CONFIG: Record<string, { 
   unit: string; 
   basePrice: number; 
-  subOptions?: { label: string; price: number }[];
+  subOptions?: { label: string; price: number; unit?: string }[];
   hasSlope?: boolean;
   slopeSurcharge?: number;
   bioWasteFactor?: number; // m3 per unit
@@ -212,11 +212,11 @@ const SERVICE_CONFIG: Record<string, {
     slopeSurcharge: 15,
     bioWasteFactor: 0.05,
     subOptions: [
-      { label: "Nižší keře a ploty (do 2 m)", price: 60 },
-      { label: "Vyšší keře a živé ploty (nad 2 m)", price: 120 },
-      { label: "Samostatné keře (solitérní)", price: 250 },
-      { label: "Prořez ovocných a mladších stromů", price: 900 },
-      { label: "Prořez starších stromů / rozsáhlý", price: 2500 },
+      { label: "Nižší živé ploty (do 2 m)", price: 60, unit: "m" },
+      { label: "Vyšší živé ploty (nad 2 m)", price: 120, unit: "m" },
+      { label: "Samostatné keře (solitérní)", price: 250, unit: "ks" },
+      { label: "Prořez ovocných a mladších stromů", price: 900, unit: "ks" },
+      { label: "Prořez starších stromů / rozsáhlý", price: 2500, unit: "ks" },
     ]
   },
   "Pletí a údržba záhonů": {
@@ -514,6 +514,10 @@ export default function App() {
                   <div className="space-y-3">
                     {formData.items.map((item, index) => {
                       const config = SERVICE_CONFIG[item.service];
+                      const selectedSubOption = config?.subOptions?.find(so => so.label === item.subOption);
+                      const currentUnit = selectedSubOption?.unit || config?.unit || '';
+                      const isHedge = item.service === "Střih keřů, plotů a stromů" && currentUnit === "m";
+
                       return (
                         <motion.div 
                           key={item.id}
@@ -560,26 +564,9 @@ export default function App() {
                             </div>
                             
                             <div className="space-y-1">
-                              <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Rozsah ({config?.unit})</label>
-                              <input 
-                                type="number" 
-                                placeholder="0"
-                                value={item.quantity || ''}
-                                onChange={(e) => {
-                                  const newItems = [...formData.items];
-                                  newItems[index] = { ...item, quantity: Number(e.target.value) };
-                                  setFormData({...formData, items: newItems});
-                                }}
-                                className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
-                              />
-                            </div>
-                          </div>
-
-                          {(config?.subOptions || config?.hasSlope) && (
-                            <div className="grid md:grid-cols-2 gap-4 pt-3 border-t border-stone-200">
-                              {config.subOptions && (
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Specifikace</label>
+                              {config?.subOptions ? (
+                                <>
+                                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Specifikace varianty</label>
                                   <select 
                                     value={item.subOption}
                                     onChange={(e) => {
@@ -591,38 +578,80 @@ export default function App() {
                                   >
                                     {config.subOptions.map(so => <option key={so.label} value={so.label}>{so.label}</option>)}
                                   </select>
+                                </>
+                              ) : (
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold uppercase tracking-widest text-brand-600 ml-1 flex items-center gap-1">
+                                    Rozsah ({currentUnit}{isHedge && " - šířka plotu"}) <Info size={12} />
+                                  </label>
+                                  <input 
+                                    type="number" 
+                                    placeholder="0"
+                                    value={item.quantity || ''}
+                                    onChange={(e) => {
+                                      const newItems = [...formData.items];
+                                      newItems[index] = { ...item, quantity: Number(e.target.value) };
+                                      setFormData({...formData, items: newItems});
+                                    }}
+                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {(config?.subOptions || config?.hasSlope) && (
+                            <div className="grid md:grid-cols-2 gap-4 pt-3 border-t border-stone-200">
+                              {config?.subOptions && (
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold uppercase tracking-widest text-brand-600 ml-1 flex items-center gap-1">
+                                    Rozsah ({currentUnit}{isHedge && " - šířka plotu"}) <Info size={12} />
+                                  </label>
+                                  <input 
+                                    type="number" 
+                                    placeholder={currentUnit === 'ks' ? "Počet kusů" : "0"}
+                                    value={item.quantity || ''}
+                                    onChange={(e) => {
+                                      const newItems = [...formData.items];
+                                      newItems[index] = { ...item, quantity: Number(e.target.value) };
+                                      setFormData({...formData, items: newItems});
+                                    }}
+                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                                  />
                                 </div>
                               )}
                               
-                              {config.hasSlope && (
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Práce ve svahu?</label>
-                                  <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-stone-200">
-                                    {[
-                                      { label: 'Ano', value: true },
-                                      { label: 'Ne', value: false }
-                                    ].map((opt) => (
-                                      <button
-                                        key={opt.label}
-                                        type="button"
-                                        onClick={() => {
-                                          const newItems = [...formData.items];
-                                          newItems[index] = { ...item, isSlope: opt.value };
-                                          setFormData({...formData, items: newItems});
-                                        }}
-                                        className={cn(
-                                          "flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
-                                          item.isSlope === opt.value 
-                                            ? "bg-brand-500 text-white shadow-md shadow-brand-500/20" 
-                                            : "text-stone-400 hover:text-stone-600"
-                                        )}
-                                      >
-                                        {opt.label}
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
+                              <div className="space-y-1">
+                                {config?.hasSlope && (
+                                  <>
+                                    <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Práce ve svahu?</label>
+                                    <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-stone-200">
+                                      {[
+                                        { label: 'Ano', value: true },
+                                        { label: 'Ne', value: false }
+                                      ].map((opt) => (
+                                        <button
+                                          key={opt.label}
+                                          type="button"
+                                          onClick={() => {
+                                            const newItems = [...formData.items];
+                                            newItems[index] = { ...item, isSlope: opt.value };
+                                            setFormData({...formData, items: newItems});
+                                          }}
+                                          className={cn(
+                                            "flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                                            item.isSlope === opt.value 
+                                              ? "bg-brand-500 text-white shadow-md shadow-brand-500/20" 
+                                              : "text-stone-400 hover:text-stone-600"
+                                          )}
+                                        >
+                                          {opt.label}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </>
+                                )}
+                              </div>
 
                               {item.service === "Zimní údržba" && item.quantity > 0 && (
                                 <div className="col-span-2 flex items-center gap-3 text-sm font-bold text-brand-600 bg-brand-50 p-4 rounded-2xl border border-brand-100">
