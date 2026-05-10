@@ -500,15 +500,15 @@ export default function App() {
         <main className="pt-24 pb-32 px-6">
           <div className="max-w-4xl mx-auto">
             <div className="mb-12 text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-4 tracking-tight">Cenová kalkulačka</h1>
-              <p className="text-stone-600 font-medium text-lg">Získejte okamžitý odhad ceny údržby vaší zeleně.</p>
+              <h1 className="text-5xl md:text-6xl font-bold text-stone-900 mb-4 tracking-tight">Cenová kalkulačka</h1>
+              <p className="text-stone-600 font-medium text-xl">Získejte okamžitý odhad ceny údržby vaší zeleně.</p>
             </div>
 
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-stone-100">
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-stone-900">1. Vyberte služby</h3>
+                    <h3 className="text-xl font-bold text-stone-900">1. Vyberte služby</h3>
                   </div>
                   
                   <div className="space-y-3">
@@ -540,7 +540,7 @@ export default function App() {
                           
                           <div className="grid md:grid-cols-2 gap-4">
                             <div className="space-y-1">
-                              <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Služba</label>
+                              <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Služba</label>
                                 <select 
                                   value={item.service}
                                   onChange={(e) => {
@@ -556,7 +556,7 @@ export default function App() {
                                     };
                                     setFormData({...formData, items: newItems});
                                   }}
-                                  className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                                  className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                                 >
                                   {index > 0 && <option value="Žádná">-- Nevybráno --</option>}
                                   {Object.keys(SERVICE_CONFIG).map(s => <option key={s} value={s}>{s}</option>)}
@@ -566,7 +566,7 @@ export default function App() {
                             <div className="space-y-1">
                               {config?.subOptions ? (
                                 <>
-                                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Specifikace varianty</label>
+                                  <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Specifikace varianty</label>
                                   <select 
                                     value={item.subOption}
                                     onChange={(e) => {
@@ -574,14 +574,14 @@ export default function App() {
                                       newItems[index] = { ...item, subOption: e.target.value };
                                       setFormData({...formData, items: newItems});
                                     }}
-                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                                   >
                                     {config.subOptions.map(so => <option key={so.label} value={so.label}>{so.label}</option>)}
                                   </select>
                                 </>
                               ) : (
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold uppercase tracking-widest text-brand-600 ml-1 flex items-center gap-1">
+                                  <label className="text-xs font-bold uppercase tracking-widest text-brand-600 ml-1 flex items-center gap-1">
                                     Rozsah ({currentUnit}{isHedge && " - šířka plotu"}) <Info size={12} />
                                   </label>
                                   <input 
@@ -593,7 +593,7 @@ export default function App() {
                                       newItems[index] = { ...item, quantity: Number(e.target.value) };
                                       setFormData({...formData, items: newItems});
                                     }}
-                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                                   />
                                 </div>
                               )}
@@ -604,7 +604,7 @@ export default function App() {
                             <div className="grid md:grid-cols-2 gap-4 pt-3 border-t border-stone-200">
                               {config?.subOptions && (
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold uppercase tracking-widest text-brand-600 ml-1 flex items-center gap-1">
+                                  <label className="text-xs font-bold uppercase tracking-widest text-brand-600 ml-1 flex items-center gap-1">
                                     Rozsah ({currentUnit}{isHedge && " - šířka plotu"}) <Info size={12} />
                                   </label>
                                   <input 
@@ -616,7 +616,7 @@ export default function App() {
                                       newItems[index] = { ...item, quantity: Number(e.target.value) };
                                       setFormData({...formData, items: newItems});
                                     }}
-                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                                   />
                                 </div>
                               )}
@@ -624,7 +624,7 @@ export default function App() {
                               <div className="space-y-1">
                                 {config?.hasSlope && (
                                   <>
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Práce ve svahu?</label>
+                                    <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Práce ve svahu?</label>
                                     <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-stone-200">
                                       {[
                                         { label: 'Ano', value: true },
@@ -639,7 +639,7 @@ export default function App() {
                                             setFormData({...formData, items: newItems});
                                           }}
                                           className={cn(
-                                            "flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                                            "flex-1 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
                                             item.isSlope === opt.value 
                                               ? "bg-brand-500 text-white shadow-md shadow-brand-500/20" 
                                               : "text-stone-400 hover:text-stone-600"
@@ -654,7 +654,7 @@ export default function App() {
                               </div>
 
                               {item.service === "Zimní údržba" && item.quantity > 0 && (
-                                <div className="col-span-2 flex items-center gap-3 text-sm font-bold text-brand-600 bg-brand-50 p-4 rounded-2xl border border-brand-100">
+                                <div className="col-span-2 flex items-center gap-3 text-base font-bold text-brand-600 bg-brand-50 p-4 rounded-2xl border border-brand-100">
                                   <Clock size={20} />
                                   Odhadovaný čas: cca {config.estimateLogic!(item.quantity)} motohodin práce sypače
                                 </div>
@@ -689,33 +689,33 @@ export default function App() {
                 </div>
 
                 <div className="pt-6 border-t border-stone-100 space-y-6">
-                  <h3 className="text-lg font-bold text-stone-900">2. Vaše údaje</h3>
+                  <h3 className="text-xl font-bold text-stone-900">2. Vaše údaje</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Jméno a příjmení</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Jméno a příjmení</label>
                       <input 
                         type="text" 
                         placeholder="Vaše jméno"
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Email</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Email</label>
                       <input 
                         type="email" 
                         placeholder="vas@email.cz"
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                       />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Četnost údržby</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Četnost údržby</label>
                       <div className="flex gap-1.5 p-1 bg-stone-50 rounded-xl border border-stone-200">
                         {['jednorázová', 'pravidelná'].map((type) => (
                           <button
@@ -723,7 +723,7 @@ export default function App() {
                             type="button"
                             onClick={() => setFormData({...formData, serviceType: type})}
                             className={cn(
-                              "flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                              "flex-1 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
                               formData.serviceType === type 
                                 ? "bg-brand-500 text-white shadow-md shadow-brand-500/20" 
                                 : "text-stone-400 hover:text-stone-600"
@@ -737,11 +737,11 @@ export default function App() {
 
                     {formData.serviceType === 'pravidelná' && (
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Četnost služeb</label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Četnost služeb</label>
                         <select 
                           value={formData.frequency}
                           onChange={(e) => setFormData({...formData, frequency: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                          className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                         >
                           <option value="2-3x ročně">2-3x ročně (sleva 2 %)</option>
                           <option value="4-6x ročně">4-6x ročně (sleva 5 %)</option>
@@ -755,34 +755,34 @@ export default function App() {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Preferovaný termín zahájení prací</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Preferovaný termín zahájení prací</label>
                       <input 
                         type="date" 
                         value={formData.date}
                         onChange={(e) => setFormData({...formData, date: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">PSČ (pro dopravu)</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">PSČ (pro dopravu)</label>
                       <input 
                         type="text" 
                         placeholder="463 12"
                         value={formData.psc}
                         onChange={(e) => setFormData({...formData, psc: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-sm"
+                        className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-1">Zpráva (volitelné)</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Zpráva (volitelné)</label>
                     <textarea 
                       rows={3}
                       placeholder="Doplňující informace..."
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all resize-none font-bold text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all resize-none font-bold text-base"
                     />
                   </div>
                 </div>
@@ -808,11 +808,11 @@ export default function App() {
                       </div>
 
                       <div className="space-y-4">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-500 mb-4">Rozpis položek</p>
+                        <p className="text-xs font-bold uppercase tracking-[0.3em] text-stone-500 mb-4">Rozpis položek</p>
                         {priceBreakdown.map((item, i) => (
                           <div key={i} className="flex justify-between items-center group">
-                            <span className="text-sm font-medium text-stone-300 group-hover:text-white transition-colors">{item.label}</span>
-                            <span className="font-bold text-brand-400">{item.price.toLocaleString()} Kč</span>
+                            <span className="text-base font-medium text-stone-300 group-hover:text-white transition-colors">{item.label}</span>
+                            <span className="font-bold text-brand-400 text-lg">{item.price.toLocaleString()} Kč</span>
                           </div>
                         ))}
                       </div>
@@ -867,10 +867,10 @@ export default function App() {
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-stone-200 px-6 py-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-0.5">Aktuální odhad ceny</span>
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-0.5">Aktuální odhad ceny</span>
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black text-stone-900">{calculatedPrice.toLocaleString()}</span>
-                <span className="text-sm font-bold text-brand-600">Kč</span>
+                <span className="text-3xl font-black text-stone-900">{calculatedPrice.toLocaleString()}</span>
+                <span className="text-base font-bold text-brand-600">Kč</span>
               </div>
             </div>
             <button 
@@ -878,10 +878,10 @@ export default function App() {
                 const element = document.getElementById('submit-calc');
                 element?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="bg-brand-500 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2"
+              className="bg-brand-500 text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2"
             >
               Dokončit poptávku
-              <ArrowRight size={16} />
+              <ArrowRight size={20} />
             </button>
           </div>
         </div>
@@ -925,7 +925,7 @@ export default function App() {
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 to-transparent md:hidden" />
                 <div className="absolute bottom-6 left-6 md:hidden">
                   <h3 className="text-3xl font-bold text-white mb-2">{selectedService.title}</h3>
-                  <span className="text-brand-400 font-bold bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-sm">
+                  <span className="text-stone-400 font-bold bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-base">
                     {selectedService.price}
                   </span>
                 </div>
@@ -937,7 +937,7 @@ export default function App() {
                     <div className="w-12 h-12 bg-brand-100 text-brand-500 rounded-xl flex items-center justify-center">
                       <selectedService.icon size={24} />
                     </div>
-                    <span className="text-sm font-bold text-brand-600 bg-brand-100 px-3 py-1 rounded-full">
+                    <span className="text-base font-bold text-brand-600 bg-brand-100 px-3 py-1 rounded-full">
                       {selectedService.price}
                     </span>
                   </div>
@@ -950,7 +950,7 @@ export default function App() {
                       <Info size={20} className="text-brand-500" />
                       O službě
                     </h4>
-                    <p className="text-stone-600 leading-relaxed font-medium">
+                    <p className="text-stone-600 leading-relaxed font-semibold text-lg">
                       {selectedService.longDescription}
                     </p>
                   </section>
@@ -963,8 +963,8 @@ export default function App() {
                     <div className="bg-stone-50 rounded-2xl p-6 space-y-4">
                       {selectedService.detailedPrices.map((price: any, i: number) => (
                         <div key={i} className="flex justify-between items-center border-b border-stone-200 pb-3 last:border-0 last:pb-0">
-                          <span className="text-sm font-medium text-stone-600">{price.name}</span>
-                          <span className="font-bold text-brand-600">{price.price}</span>
+                          <span className="text-base font-medium text-stone-600">{price.name}</span>
+                          <span className="font-bold text-brand-600 text-lg">{price.price}</span>
                         </div>
                       ))}
                     </div>
@@ -1015,7 +1015,7 @@ export default function App() {
                   <X size={24} />
                 </button>
               </div>
-              <div className="p-8 overflow-y-auto text-stone-600 leading-relaxed space-y-6 font-medium">
+              <div className="p-8 overflow-y-auto text-stone-600 leading-relaxed space-y-6 font-semibold text-lg">
                 {activeModal === 'privacy' ? (
                   <>
                     <section>
@@ -1102,7 +1102,7 @@ export default function App() {
                 key={item} 
                 href={`#${item.toLowerCase().replace(' ', '-')}`}
                 className={cn(
-                  "text-sm font-bold transition-colors",
+                  "text-base font-bold transition-colors",
                   scrolled ? "text-stone-900 hover:text-brand-600" : "text-white hover:text-brand-300 drop-shadow-md"
                 )}
               >
@@ -1112,7 +1112,7 @@ export default function App() {
             <a 
               href="#kontakt"
               className={cn(
-                "text-sm font-bold transition-colors",
+                "text-base font-bold transition-colors",
                 scrolled ? "text-brand-600 hover:text-brand-700" : "text-brand-400 hover:text-brand-300 drop-shadow-md"
               )}
             >
@@ -1120,7 +1120,7 @@ export default function App() {
             </a>
             <button 
               onClick={() => setView('calculator')}
-              className="bg-brand-500 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-brand-600 transition-all hover:shadow-lg hover:shadow-brand-500/20 active:scale-95"
+              className="bg-brand-500 text-white px-6 py-3 rounded-full text-base font-bold hover:bg-brand-600 transition-all hover:shadow-lg hover:shadow-brand-500/20 active:scale-95"
             >
               Cenová kalkulačka
             </button>
@@ -1230,8 +1230,8 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-6">
-                <span className="w-2 h-2 rounded-full bg-brand-400 animate-ping" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-100 text-brand-700 text-sm font-bold uppercase tracking-wider mb-6">
+                <span className="w-2.5 h-2.5 rounded-full bg-brand-400 animate-ping" />
                 Liberec a okolí
               </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 tracking-tight">
@@ -1243,7 +1243,7 @@ export default function App() {
                   Péče o vaši zeleň
                 </span>
               </h1>
-              <p className="text-lg text-brand-100 text-outline-sm mb-8 max-w-lg leading-relaxed font-bold">
+              <p className="text-xl text-brand-100 text-outline-sm mb-8 max-w-lg leading-relaxed font-bold">
                 Údržba zeleně pro firmy, SVJ i soukromé zahrady.
                 <br />
                 Jednorázově i pravidelně v Liberci, Jablonci, Turnově a širokém okolí.
@@ -1273,8 +1273,8 @@ export default function App() {
                     <spec.icon size={26} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-stone-900">{spec.title}</h3>
-                    <p className="text-sm text-stone-600 font-medium leading-relaxed">{spec.description}</p>
+                    <h3 className="text-xl font-bold text-stone-900">{spec.title}</h3>
+                    <p className="text-base text-stone-600 font-medium leading-relaxed">{spec.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -1310,15 +1310,15 @@ export default function App() {
                   <div className="w-12 h-12 bg-white text-brand-500 rounded-xl flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors shadow-sm">
                     <service.icon size={24} />
                   </div>
-                  <span className="text-xs font-bold text-brand-600 bg-brand-100 px-3 py-1 rounded-full">
+                  <span className="text-sm font-bold text-brand-600 bg-brand-100 px-3 py-1 rounded-full">
                     {service.price}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-stone-900 mb-3">{service.title}</h3>
-                <p className="text-stone-600 text-sm leading-relaxed font-medium mb-4">
+                <h3 className="text-2xl font-bold text-stone-900 mb-3">{service.title}</h3>
+                <p className="text-stone-600 text-base leading-relaxed font-medium mb-4">
                   {service.description}
                 </p>
-                <div className="flex items-center gap-2 text-brand-600 text-xs font-bold uppercase tracking-wider group-hover:gap-3 transition-all">
+                <div className="flex items-center gap-2 text-brand-600 text-sm font-bold uppercase tracking-wider group-hover:gap-3 transition-all">
                   Více informací <ArrowRight size={14} />
                 </div>
               </motion.div>
@@ -1332,7 +1332,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Ceník</h2>
-            <div className="mt-4 inline-flex items-center gap-2 text-stone-600 bg-brand-100/50 px-4 py-2 rounded-full text-sm font-medium border border-brand-200">
+            <div className="mt-4 inline-flex items-center gap-2 text-stone-600 bg-brand-100/50 px-4 py-2 rounded-full text-base font-medium border border-brand-200">
               <Info size={16} className="text-brand-600" />
               Ceny jsou orientační. V případě pravidelné údržby možnost slevy dle pravidelnosti údržby.
             </div>
@@ -1374,13 +1374,13 @@ export default function App() {
                           return (
                             <div key={i} className="flex flex-col py-4 border-b border-stone-100 last:border-0 group hover:bg-brand-50/50 transition-colors px-2 -mx-2 rounded-lg">
                               <div className="flex items-start justify-between gap-3">
-                                <span className="text-sm font-semibold text-stone-900 leading-snug">{mainName}</span>
-                                <span className="text-brand-600 font-bold text-sm whitespace-nowrap text-right">{mainPrice}</span>
+                                <span className="text-base font-semibold text-stone-900 leading-snug">{mainName}</span>
+                                <span className="text-brand-600 font-bold text-base whitespace-nowrap text-right">{mainPrice}</span>
                               </div>
                               {(subName || subPrice) && (
                                 <div className="flex justify-between items-start mt-1.5 gap-2">
-                                  <span className="text-[13px] text-stone-500 leading-tight italic">{subName || ''}</span>
-                                  <span className="text-[13px] text-brand-500 leading-tight italic text-right ml-auto">{subPrice || ''}</span>
+                                  <span className="text-sm text-stone-500 leading-tight italic">{subName || ''}</span>
+                                  <span className="text-sm text-brand-500 leading-tight italic text-right ml-auto">{subPrice || ''}</span>
                                 </div>
                               )}
                             </div>
@@ -1434,29 +1434,29 @@ export default function App() {
               
               <div className="space-y-6 mt-10">
                 <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10">
-                    <Mail size={20} />
+                  <div className="w-14 h-14 rounded-xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10">
+                    <Mail size={24} />
                   </div>
                   <div>
-                    <p className="text-stone-300 text-[10px] font-bold uppercase tracking-widest">Napište nám</p>
-                    <p className="text-lg font-bold">zahradnik.lbc@gmail.com</p>
+                    <p className="text-stone-300 text-xs font-bold uppercase tracking-widest">Napište nám</p>
+                    <p className="text-xl font-bold">zahradnik.lbc@gmail.com</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10">
-                    <MapPin size={20} />
+                  <div className="w-14 h-14 rounded-xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10">
+                    <MapPin size={24} />
                   </div>
                   <div>
-                    <p className="text-stone-300 text-[10px] font-bold uppercase tracking-widest">Působnost</p>
-                    <p className="text-lg font-bold">Liberec, Jablonec nad Nisou, Turnov a široké okolí</p>
+                    <p className="text-stone-300 text-xs font-bold uppercase tracking-widest">Působnost</p>
+                    <p className="text-xl font-bold">Liberec, Jablonec nad Nisou, Turnov a široké okolí</p>
                   </div>
                 </div>
 
                 <div className="pt-6 border-t border-white/10">
                   <div className="flex flex-col gap-1">
-                    <span className="text-stone-300 text-[10px] font-bold uppercase tracking-widest">Fakturační údaje</span>
-                    <span className="text-md font-bold">IČO: 23217375</span>
+                    <span className="text-stone-300 text-xs font-bold uppercase tracking-widest">Fakturační údaje</span>
+                    <span className="text-lg font-bold">IČO: 23217375</span>
                   </div>
                 </div>
               </div>
@@ -1500,11 +1500,11 @@ export default function App() {
                   "Mníšek", "Stráž nad Nisou", "Janov nad Nisou", "Bedřichov", 
                   "Malá Skála", "Frýdštejn", "Sychrov", "Jenišovice", "Ohrazenice"
                 ].map(city => (
-                  <span key={city} className="bg-white px-3 py-1 rounded-full text-xs font-bold text-brand-600 border border-brand-200 shadow-sm">
+                  <span key={city} className="bg-white px-3 py-1 rounded-full text-sm font-bold text-brand-600 border border-brand-200 shadow-sm">
                     {city}
                   </span>
                 ))}
-                <span className="text-brand-500 text-xs font-bold py-1">...a široké okolí</span>
+                <span className="text-brand-500 text-sm font-bold py-1">...a široké okolí</span>
               </div>
             </div>
 
@@ -1525,22 +1525,22 @@ export default function App() {
       <footer className="bg-stone-50 text-stone-500 py-6 px-6 border-t border-stone-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <a href="#o-nás" className="flex items-center gap-2 hover:opacity-80 transition-opacity group">
-            <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white shadow-sm">
-              <Leaf size={18} />
+            <div className="w-10 h-10 bg-brand-500 rounded-lg flex items-center justify-center text-white shadow-sm">
+              <Leaf size={22} />
             </div>
-            <span className="text-lg font-bold text-stone-900 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">
+            <span className="text-xl font-bold text-stone-900 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">
               Zahrady <span className="text-brand-400 text-outline-sm">LBC</span>
             </span>
           </a>
           
           <div className="text-center md:text-left">
-            <p className="text-sm font-medium">
+            <p className="text-base font-bold">
               © {new Date().getFullYear()} Zahrady LBC | IČO: 23217375
             </p>
-            <p className="text-xs mt-1">Údržba zeleně v Liberci, Jablonci, Turnově a okolí</p>
+            <p className="text-sm mt-1 font-medium">Údržba zeleně v Liberci, Jablonci, Turnově a okolí</p>
           </div>
           
-          <div className="flex gap-8 text-xs font-bold uppercase tracking-widest">
+          <div className="flex gap-8 text-sm font-bold uppercase tracking-widest">
             <button 
               onClick={() => setActiveModal('privacy')}
               className="hover:text-brand-500 transition-colors cursor-pointer"
