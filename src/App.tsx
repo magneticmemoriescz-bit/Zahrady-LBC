@@ -285,6 +285,7 @@ interface ServiceItem {
   quantity: number;
   subOption?: string;
   isSlope?: boolean;
+  disposeBioWaste?: boolean;
 }
 
 interface PriceBreakdownItem {
@@ -332,8 +333,8 @@ export default function App() {
     psc: '',
     message: '',
     items: [
-      { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false },
-      { id: Math.random().toString(36).substr(2, 9), service: "Žádná", quantity: 0, isSlope: false },
+      { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false, disposeBioWaste: true },
+      { id: Math.random().toString(36).substr(2, 9), service: "Žádná", quantity: 0, isSlope: false, disposeBioWaste: true },
     ] as ServiceItem[]
   });
 
@@ -371,7 +372,7 @@ export default function App() {
       breakdown.push({ label, price: itemTotal });
 
       // Bio waste calculation
-      if (config.bioWasteFactor) {
+      if (config.bioWasteFactor && item.disposeBioWaste) {
         // Only add bio waste for grass mowing if it's "se sběrem"
         if (item.service === "Sekání trávy") {
           if (item.subOption?.includes("se sběrem")) {
@@ -429,6 +430,82 @@ export default function App() {
   const priceBreakdown = getPriceBreakdown();
   const calculatedPrice = priceBreakdown.reduce((sum, item) => sum + item.price, 0);
 
+  const getDetailedEmailBreakdown = () => {
+    const lines: string[] = [];
+    let totalBioWasteVolume = 0;
+
+    formData.items.forEach(item => {
+      if (item.service === "Žádná" || item.quantity <= 0) return;
+      
+      const config = SERVICE_CONFIG[item.service];
+      if (!config) return;
+
+      let unitPrice = config.basePrice;
+      if (item.subOption && config.subOptions) {
+        const selectedSub = config.subOptions.find(so => so.label === item.subOption);
+        if (selectedSub) unitPrice = selectedSub.price;
+      }
+
+      const selectedSubOption = config?.subOptions?.find(so => so.label === item.subOption);
+      const currentUnit = selectedSubOption?.unit || config?.unit || '';
+
+      const baseItemTotal = unitPrice * item.quantity;
+      lines.push(`${item.service}${item.subOption ? ` (${item.subOption})` : ''} | ${item.quantity} ${currentUnit} | ${baseItemTotal.toLocaleString()} Kč`);
+      
+      if (item.isSlope && config.hasSlope && config.slopeSurcharge) {
+        const surcharge = config.slopeSurcharge * item.quantity;
+        lines.push(`  + Příplatek za práci ve svahu | ${item.quantity} ${currentUnit} | +${surcharge.toLocaleString()} Kč`);
+      }
+
+      // Bio waste calculation logic (sync with getPriceBreakdown)
+      if (config.bioWasteFactor && item.disposeBioWaste) {
+        if (item.service === "Sekání trávy") {
+          if (item.subOption?.includes("se sběrem")) {
+            let specificFactor = config.bioWasteFactor;
+            if (item.subOption.includes("do 10 cm")) specificFactor = 0.001;
+            else if (item.subOption.includes("10–15 cm")) specificFactor = 0.0015;
+            totalBioWasteVolume += specificFactor * item.quantity;
+          }
+        } else {
+          totalBioWasteVolume += config.bioWasteFactor * item.quantity;
+        }
+      }
+    });
+
+    if (totalBioWasteVolume > 0) {
+      const bioWastePrice = Math.ceil(totalBioWasteVolume * 450);
+      lines.push(`Odvoz a likvidace bioodpadu (odhad ${totalBioWasteVolume.toFixed(2)} m³) | | ${bioWastePrice.toLocaleString()} Kč`);
+    }
+
+    if (formData.psc) {
+      const distance = getDistanceByPsc(formData.psc);
+      const transportPrice = distance * 12 * 2;
+      if (transportPrice > 0) {
+        lines.push(`Doprava (vzdálenost ${distance} km x 2) | | ${transportPrice.toLocaleString()} Kč`);
+      }
+    }
+
+    if (formData.serviceType === 'pravidelná') {
+      let discountPercent = 0;
+      switch (formData.frequency) {
+        case '2-3x ročně': discountPercent = 2; break;
+        case '4-6x ročně': discountPercent = 5; break;
+        case '1x měsíčně': discountPercent = 7; break;
+        case '2x měsíčně': discountPercent = 10; break;
+        case 'týdně': discountPercent = 15; break;
+      }
+
+      if (discountPercent > 0) {
+        const fullBreakdown = getPriceBreakdown();
+        const currentTotal = fullBreakdown.filter(i => !i.label.includes('Sleva')).reduce((sum, item) => sum + item.price, 0);
+        const discountAmount = Math.round(currentTotal * (discountPercent / 100));
+        lines.push(`Sleva za pravidelnou údržbu (${formData.frequency}: ${discountPercent} %) | | -${discountAmount.toLocaleString()} Kč`);
+      }
+    }
+
+    return lines.join('\n');
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email) {
@@ -444,12 +521,12 @@ export default function App() {
       to_email: formData.email,
       owner_email: 'zahradnik.lbc@gmail.com',
       total_price: `${calculatedPrice.toLocaleString()} Kč`,
-      service_type: formData.serviceType,
-      frequency: formData.serviceType === 'pravidelná' ? formData.frequency : 'Jednorázová',
+      service_type: formData.serviceType === 'pravidelná' ? 'Pravidelná údržba' : 'Jednorázová poptávka',
+      frequency: formData.serviceType === 'pravidelná' ? formData.frequency : 'N/A',
       date: formData.date || 'Nespecifikováno',
       psc: formData.psc || 'Nespecifikováno',
       message: formData.message || 'Bez zprávy',
-      price_breakdown: priceBreakdown.map(item => `${item.label}: ${item.price.toLocaleString()} Kč`).join('\n')
+      price_breakdown: getDetailedEmailBreakdown()
     };
 
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'sVd3x5rH1tZu6JGUR';
@@ -478,7 +555,7 @@ export default function App() {
           email: '',
           message: '',
           items: [
-            { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false },
+            { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false, disposeBioWaste: true },
           ]
         });
       }, 3000);
@@ -580,6 +657,7 @@ export default function App() {
                                       service: newService,
                                       subOption: newConfig?.subOptions ? newConfig.subOptions[0].label : undefined,
                                       isSlope: false,
+                                      disposeBioWaste: true,
                                       quantity: newService === "Žádná" ? 0 : item.quantity
                                     };
                                     setFormData({...formData, items: newItems});
@@ -623,6 +701,26 @@ export default function App() {
                                     }}
                                     className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                                   />
+                                  {config?.bioWasteFactor && (
+                                    <div className="flex items-center justify-end mt-1">
+                                      <label className="flex items-center gap-2 cursor-pointer group">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 group-hover:text-brand-500 transition-colors">Likvidace odpadu</span>
+                                        <div className="relative inline-flex items-center cursor-pointer">
+                                          <input 
+                                            type="checkbox" 
+                                            className="sr-only peer" 
+                                            checked={item.disposeBioWaste}
+                                            onChange={(e) => {
+                                              const newItems = [...formData.items];
+                                              newItems[index] = { ...item, disposeBioWaste: e.target.checked };
+                                              setFormData({...formData, items: newItems});
+                                            }}
+                                          />
+                                          <div className="w-8 h-4 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                                        </div>
+                                      </label>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -646,6 +744,26 @@ export default function App() {
                                     }}
                                     className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                                   />
+                                  {config?.bioWasteFactor && (item.service !== "Sekání trávy" || item.subOption?.includes("se sběrem")) && (
+                                    <div className="flex items-center gap-2 mt-1 px-1">
+                                      <label className="flex items-center gap-2 cursor-pointer group">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 group-hover:text-brand-500 transition-colors">Likvidace odpadu</span>
+                                        <div className="relative inline-flex items-center cursor-pointer">
+                                          <input 
+                                            type="checkbox" 
+                                            className="sr-only peer" 
+                                            checked={item.disposeBioWaste}
+                                            onChange={(e) => {
+                                              const newItems = [...formData.items];
+                                              newItems[index] = { ...item, disposeBioWaste: e.target.checked };
+                                              setFormData({...formData, items: newItems});
+                                            }}
+                                          />
+                                          <div className="w-8 h-4 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                                        </div>
+                                      </label>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                               
@@ -1291,13 +1409,13 @@ export default function App() {
                 Jednorázově i pravidelně v Liberci, Jablonci, Turnově a širokém okolí.
               </p>
               <div className="flex flex-wrap gap-4">
-                <a 
-                  href="#kontakt"
+                <button 
+                  onClick={() => setView('calculator')}
                   className="bg-brand-500 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-brand-600 transition-all hover:shadow-xl hover:shadow-brand-500/30 group"
                 >
                   Nezávazná poptávka
                   <ChevronRight className="group-hover:translate-x-1 transition-transform" />
-                </a>
+                </button>
               </div>
             </motion.div>
 
@@ -1457,7 +1575,7 @@ export default function App() {
       </section>
 
       {/* Contact Section */}
-      <section id="kontakt" className="pt-20 pb-44 md:pt-24 md:pb-72 lg:pt-32 lg:pb-96 px-6 md:px-12 lg:px-24 relative overflow-hidden scroll-mt-24">
+      <section id="kontakt" className="pt-20 pb-24 md:pt-24 md:pb-32 lg:pt-32 lg:pb-40 px-6 md:px-12 lg:px-24 relative overflow-hidden scroll-mt-24">
         {/* Background Image with Dark Overlay */}
         <div 
           className="absolute inset-0 z-0 bg-cover bg-center"
@@ -1476,7 +1594,7 @@ export default function App() {
                 <span className="text-brand-400">o vaši zeleň</span>
               </p>
               
-              <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-12 mt-12 px-4 md:px-0">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-10 mt-10 px-4 md:px-0">
                 <div className="flex flex-col items-center md:items-start gap-6 group">
                   <div className="w-16 h-16 rounded-2xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10 shrink-0 shadow-lg">
                     <Mail size={28} />
