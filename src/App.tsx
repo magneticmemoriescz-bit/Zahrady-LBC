@@ -151,7 +151,7 @@ const specializations = [
 ];
 
 const pricingData = [
-  { category: "Trávníky", icon: Leaf, items: [
+  { category: "Sekání", icon: Leaf, items: [
     { name: "Sekání trávy sekačkou bez sběru | do 10 cm", price: "2 Kč / m²" },
     { name: "Sekání trávy sekačkou se sběrem | do 10 cm", price: "2,5 Kč / m²" },
     { name: "Sekání trávy se sběrem | 10–15 cm", price: "5 Kč / m²" },
@@ -161,6 +161,8 @@ const pricingData = [
     { name: "Sekání křovinořezem bez sběru | 30–50 cm", price: "9 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | 50–100 cm", price: "16 Kč / m²" },
     { name: "Hrabání trávy", price: "6 Kč / m²" },
+  ]},
+  { category: "Péče o trávník", icon: Leaf, items: [
     { name: "Balíček Standard | (běžná údržba: vertikutace, topdressing, hnojení, dosev)", price: "50 Kč / m²" },
     { name: "Balíček Prémium | (anglický trávník: Standard + aerifikace + pískování)", price: "115 Kč / m²" },
     { name: "Vertikutace trávníku | (včetně vyčesání)", price: "12 Kč / m²" },
@@ -1106,22 +1108,22 @@ export default function App() {
       </AnimatePresence>
 
       {/* Navigation */}
-      <nav className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4",
-        scrolled ? "glass shadow-sm py-3" : "bg-transparent border-b border-white/5"
-      )}>
+      <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-2 glass shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border-b border-stone-200/30">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <a href="#o-nás" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-brand-400 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-400/20">
-              <Leaf size={24} />
+          <button 
+            onClick={() => {
+              setView('main');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }} 
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-9 h-9 bg-brand-400 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-400/20">
+              <Leaf size={20} />
             </div>
-            <span className={cn(
-              "text-xl font-bold tracking-tight transition-colors",
-              scrolled ? "text-stone-900" : "text-stone-900"
-            )}>
+            <span className="text-lg font-bold tracking-tight text-stone-900">
               Zahrady <span className="text-brand-400">LBC</span>
             </span>
-          </a>
+          </button>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
@@ -1129,20 +1131,35 @@ export default function App() {
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().replace(' ', '-')}`}
-                className={cn(
-                  "text-base font-bold transition-colors",
-                  scrolled ? "text-stone-900 hover:text-brand-600" : "text-white hover:text-brand-300 drop-shadow-md"
-                )}
+                onClick={(e) => {
+                  if (view !== 'main') {
+                    e.preventDefault();
+                    setView('main');
+                    setTimeout(() => {
+                      const id = item.toLowerCase().replace(' ', '-');
+                      const element = document.getElementById(id);
+                      if (element) element.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }
+                }}
+                className="text-base font-bold transition-colors text-stone-900 hover:text-brand-600"
               >
                 {item}
               </a>
             ))}
             <a 
               href="#kontakt"
-              className={cn(
-                "text-base font-bold transition-colors",
-                scrolled ? "text-brand-600 hover:text-brand-700" : "text-brand-400 hover:text-brand-300 drop-shadow-md"
-              )}
+              onClick={(e) => {
+                if (view !== 'main') {
+                  e.preventDefault();
+                  setView('main');
+                  setTimeout(() => {
+                    const element = document.getElementById('kontakt');
+                    if (element) element.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }
+              }}
+              className="text-base font-bold transition-colors text-brand-600 hover:text-brand-700"
             >
               Poptat údržbu
             </a>
@@ -1156,10 +1173,7 @@ export default function App() {
 
           {/* Mobile Toggle */}
           <button 
-            className={cn(
-              "md:hidden p-2 transition-colors",
-              scrolled ? "text-stone-900" : "text-white"
-            )}
+            className="md:hidden p-2 transition-colors text-stone-900"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X /> : <Menu />}
@@ -1368,9 +1382,9 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {[
-              [pricingData[0]],
-              [pricingData[2], pricingData[1]],
-              [pricingData[3]]
+              [pricingData[0], pricingData[2]],
+              [pricingData[1]],
+              [pricingData[3], pricingData[4]]
             ].map((column, colIdx) => (
               <div key={colIdx} className="space-y-6">
                 {column.map((group, groupIdx) => (
@@ -1462,29 +1476,29 @@ export default function App() {
                 <span className="text-brand-400">o vaši zeleň</span>
               </p>
               
-              <div className="space-y-6 mt-10">
-                <div className="flex items-center gap-4 group">
-                  <div className="w-14 h-14 rounded-xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10">
-                    <Mail size={24} />
+              <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-12 mt-12 px-4 md:px-0">
+                <div className="flex flex-col items-center md:items-start gap-6 group">
+                  <div className="w-16 h-16 rounded-2xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10 shrink-0 shadow-lg">
+                    <Mail size={28} />
                   </div>
-                  <div>
-                    <p className="text-stone-300 text-xs font-bold uppercase tracking-widest">Napište nám</p>
-                    <p className="text-xl font-bold">zahradnik.lbc@gmail.com</p>
+                  <div className="text-center md:text-left">
+                    <p className="text-brand-400 text-xs font-bold uppercase tracking-[0.2em] mb-2">E-mailová adresa</p>
+                    <p className="text-2xl font-bold tracking-tight">zahradnik.lbc@gmail.com</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-4 group">
-                  <div className="w-14 h-14 rounded-xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10">
-                    <MapPin size={24} />
+                <div className="flex flex-col items-center md:items-start gap-6 group">
+                  <div className="w-16 h-16 rounded-2xl bg-white/10 text-brand-400 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-all border border-white/10 shrink-0 shadow-lg">
+                    <MapPin size={28} />
                   </div>
-                  <div>
-                    <p className="text-stone-300 text-xs font-bold uppercase tracking-widest">Působnost</p>
-                    <p className="text-xl font-bold">Liberec, Jablonec nad Nisou, Turnov a široké okolí</p>
+                  <div className="text-center md:text-left">
+                    <p className="text-brand-400 text-xs font-bold uppercase tracking-[0.2em] mb-2">Působnost služeb</p>
+                    <p className="text-2xl font-bold tracking-tight">Liberec, Jablonec, Turnov <br className="hidden md:block" /> a celé široké okolí</p>
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/10">
-                  <div className="flex flex-col gap-1">
+                <div className="pt-6 border-t border-white/10 col-span-full">
+                  <div className="flex flex-col items-center md:items-start gap-1">
                     <span className="text-stone-300 text-xs font-bold uppercase tracking-widest">Fakturační údaje</span>
                     <span className="text-lg font-bold">IČO: 23217375</span>
                   </div>
