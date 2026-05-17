@@ -320,6 +320,7 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | null>(null);
   const [selectedService, setSelectedService] = useState<any>(null);
+  const [selectedReference, setSelectedReference] = useState<any>(null);
   const [view, setView] = useState<'main' | 'calculator'>('main');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -1245,16 +1246,16 @@ export default function App() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            {['O nás', 'Služby', 'Ceník', 'Kontakt'].map((item) => (
+            {['O nás', 'Služby', 'Reference', 'Ceník', 'Kontakt'].map((item) => (
               <a 
                 key={item} 
-                href={`#${item.toLowerCase().replace(' ', '-')}`}
+                href={`#${item.toLowerCase().replace(' ', '-').replace('á', 'a')}`}
                 onClick={(e) => {
                   if (view !== 'main') {
                     e.preventDefault();
                     setView('main');
                     setTimeout(() => {
-                      const id = item.toLowerCase().replace(' ', '-');
+                      const id = item.toLowerCase().replace(' ', '-').replace('á', 'a');
                       const element = document.getElementById(id);
                       if (element) element.scrollIntoView({ behavior: 'smooth' });
                     }, 100);
@@ -1309,10 +1310,10 @@ export default function App() {
             className="fixed inset-0 z-40 bg-white pt-24 px-6 md:hidden"
           >
             <div className="flex flex-col gap-6">
-              {['O nás', 'Služby', 'Ceník', 'Kontakt'].map((item) => (
+              {['O nás', 'Služby', 'Reference', 'Ceník', 'Kontakt'].map((item) => (
                 <a 
                   key={item} 
-                  href={`#${item.toLowerCase().replace(' ', '-')}`}
+                  href={`#${item.toLowerCase().replace(' ', '-').replace('á', 'a')}`}
                   className="text-2xl font-bold text-stone-900"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -1682,6 +1683,167 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* References Section moved to bottom */}
+      <section id="reference" className="py-20 px-6 md:px-12 lg:px-24 bg-stone-50 scroll-mt-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-sm font-bold text-brand-600 uppercase tracking-[0.3em] mb-4">Reference</h2>
+            <h3 className="text-4xl md:text-5xl font-bold text-stone-900 tracking-tight">Naše práce mluví za nás</h3>
+            <p className="mt-4 text-stone-600 font-medium text-lg max-w-2xl mx-auto">
+              Ukázky vybraných realizací. Prohlédněte si proměny zahrad před naším zásahem a po dokončení prací.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12">
+            {[
+              {
+                title: "Revitalizace záhonu",
+                description: "Odstranění staré textilie a kamínků, nová výsadba a mulčování.",
+                before: "https://i.imgur.com/NoVlchO.jpg",
+                after: "https://i.imgur.com/c74dbNm.jpg"
+              },
+              {
+                title: "Průřez a vyčištění náletů",
+                description: "Likvidace zanedbaných náletových dřevin a prosvětlení prostoru.",
+                before: "https://i.imgur.com/OnGCLDM.jpg",
+                after: "https://i.imgur.com/3tVafbe.jpg"
+              },
+              {
+                title: "Sečení trávy",
+                description: "Běžná údržba trávníku.",
+                before: "https://i.imgur.com/mEThQxd.jpg",
+                after: "https://i.imgur.com/lqdGoc9.jpg"
+              },
+              {
+                title: "Prořez stromů",
+                description: "Zdravotní a tvarovací řez pro lepší vitalitu a vzhled dřeviny.",
+                before: "https://i.imgur.com/8Yx6pRi.jpg",
+                after: "https://i.imgur.com/LAHLa21.jpg"
+              },
+              {
+                title: "Sečení přerostlé trávy",
+                description: "Ukázka rozdílu po sečení rotační sekačkou se sběrem.",
+                before: "https://i.imgur.com/j4vFXR0.jpg",
+                after: "https://i.imgur.com/6rfjUjj.jpg"
+              },
+              {
+                title: "Likvidace divokého porostu",
+                description: "Vyčištění plochy od hustých náletů a příprava na další údržbu.",
+                before: "https://i.imgur.com/w2p9llt.jpg",
+                after: "https://i.imgur.com/rQgBu9t.jpg"
+              }
+            ].map((ref, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                onClick={() => setSelectedReference(ref)}
+                className="group cursor-pointer"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-stone-200 border border-stone-200 group-hover:shadow-2xl group-hover:shadow-brand-500/10 transition-all duration-500">
+                  <div className="absolute inset-0 grid grid-cols-2 gap-0.5">
+                    <div className="relative overflow-hidden">
+                      <img 
+                        src={ref.before} 
+                        alt="Před" 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute top-4 left-4 bg-stone-900/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        Před
+                      </div>
+                    </div>
+                    <div className="relative overflow-hidden">
+                      <img 
+                        src={ref.after} 
+                        alt="Po" 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute top-4 right-4 bg-brand-500/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        Po
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-md p-3 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 text-stone-900 shadow-xl">
+                      <ChevronRight size={24} className="-rotate-90 md:rotate-0" />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 px-2">
+                  <h4 className="text-xl font-bold text-stone-900 mb-2">{ref.title}</h4>
+                  <p className="text-stone-600 font-medium">{ref.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Reference Lightbox */}
+      <AnimatePresence>
+        {selectedReference && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-8">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedReference(null)}
+              className="absolute inset-0 bg-stone-950/95 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-7xl flex flex-col gap-6"
+            >
+              <button 
+                onClick={() => setSelectedReference(null)}
+                className="absolute -top-12 right-0 md:-top-4 md:-right-12 p-3 text-white/50 hover:text-white transition-colors hover:bg-white/10 rounded-full"
+              >
+                <X size={32} />
+              </button>
+
+              <div className="grid lg:grid-cols-2 gap-4">
+                <div className="relative aspect-[4/3] md:aspect-auto md:h-[65vh] rounded-2xl overflow-hidden shadow-2xl border border-white/5 bg-stone-900/50">
+                  <img 
+                    src={selectedReference.before} 
+                    alt="Před" 
+                    className="w-full h-full object-contain"
+                    referrerPolicy="no-referrer"
+                    style={{ imageRendering: 'auto' }}
+                  />
+                  <div className="absolute top-6 left-6 bg-stone-900/80 backdrop-blur-md text-white px-5 py-2 rounded-full text-sm font-bold uppercase tracking-[0.1em] border border-white/10">
+                    Před
+                  </div>
+                </div>
+                <div className="relative aspect-[4/3] md:aspect-auto md:h-[65vh] rounded-2xl overflow-hidden shadow-2xl border border-white/5 bg-stone-900/50">
+                  <img 
+                    src={selectedReference.after} 
+                    alt="Po" 
+                    className="w-full h-full object-contain"
+                    referrerPolicy="no-referrer"
+                    style={{ imageRendering: 'auto' }}
+                  />
+                  <div className="absolute top-6 right-6 bg-brand-500/90 backdrop-blur-md text-white px-5 py-2 rounded-full text-sm font-bold uppercase tracking-[0.1em] border border-brand-400/20 shadow-lg">
+                    Po
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center md:text-left px-4">
+                <h4 className="text-3xl font-bold text-white mb-2 tracking-tight">{selectedReference.title}</h4>
+                <p className="text-stone-400 font-medium text-lg leading-relaxed max-w-3xl">
+                  {selectedReference.description}
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <footer className="bg-stone-50 text-stone-500 py-6 px-6 border-t border-stone-200">
