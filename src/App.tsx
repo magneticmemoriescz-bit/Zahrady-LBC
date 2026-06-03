@@ -332,6 +332,7 @@ export default function App() {
     frequency: '2-3x ročně',
     date: '',
     psc: '',
+    address: '',
     message: '',
     items: [
       { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false, disposeBioWaste: true },
@@ -425,11 +426,38 @@ export default function App() {
       }
     }
 
+    // Apply volume discount (množstevní sleva)
+    const baseTotalForVolume = breakdown.filter(item => !item.label.includes('Sleva')).reduce((sum, item) => sum + item.price, 0);
+    let volumeDiscountPercent = 0;
+    if (baseTotalForVolume > 30000) {
+      volumeDiscountPercent = 15;
+    } else if (baseTotalForVolume > 20000) {
+      volumeDiscountPercent = 10;
+    } else if (baseTotalForVolume > 15000) {
+      volumeDiscountPercent = 7;
+    } else if (baseTotalForVolume > 10000) {
+      volumeDiscountPercent = 5;
+    }
+
+    if (volumeDiscountPercent > 0) {
+      const volumeDiscountAmount = Math.round(baseTotalForVolume * (volumeDiscountPercent / 100));
+      breakdown.push({ label: `Množstevní sleva (${volumeDiscountPercent}%)`, price: -volumeDiscountAmount });
+    }
+
     return breakdown;
   };
 
-  const priceBreakdown = getPriceBreakdown();
-  const calculatedPrice = priceBreakdown.reduce((sum, item) => sum + item.price, 0);
+  const rawPriceBreakdown = getPriceBreakdown();
+  const rawSubTotal = rawPriceBreakdown.reduce((sum, item) => sum + item.price, 0);
+  const isBelowMinimum = rawSubTotal > 0 && rawSubTotal < 1500;
+
+  const priceBreakdown = isBelowMinimum
+    ? [...rawPriceBreakdown, { label: "Doplatek do minimální ceny objednávky (1 500 Kč)", price: 1500 - rawSubTotal }]
+    : rawPriceBreakdown;
+
+  const calculatedPrice = isBelowMinimum ? 1500 : rawSubTotal;
+
+  const isLiberecFreeShipping = formData.psc.trim() ? getDistanceByPsc(formData.psc) === 0 : false;
 
   const getDetailedEmailBreakdown = () => {
     const lines: string[] = [];
@@ -504,18 +532,47 @@ export default function App() {
       }
     }
 
+    // Add Volume Discount line to email breakdown manually
+    const fullBreakdown = getPriceBreakdown();
+    const baseTotalForVolume = fullBreakdown.filter(i => !i.label.includes('Sleva')).reduce((sum, item) => sum + item.price, 0);
+    let volumeDiscountPercent = 0;
+    if (baseTotalForVolume > 30000) {
+      volumeDiscountPercent = 15;
+    } else if (baseTotalForVolume > 20000) {
+      volumeDiscountPercent = 10;
+    } else if (baseTotalForVolume > 15000) {
+      volumeDiscountPercent = 7;
+    } else if (baseTotalForVolume > 10000) {
+      volumeDiscountPercent = 5;
+    }
+
+    if (volumeDiscountPercent > 0) {
+      const volumeDiscountAmount = Math.round(baseTotalForVolume * (volumeDiscountPercent / 100));
+      lines.push(`Množstevní sleva (${volumeDiscountPercent} %) | | -${volumeDiscountAmount.toLocaleString()} Kč`);
+    }
+
+    const rawBreakdown = getPriceBreakdown();
+    const rawSubTotalVal = rawBreakdown.reduce((sum, item) => sum + item.price, 0);
+    if (rawSubTotalVal > 0 && rawSubTotalVal < 1500) {
+      lines.push(`Doplatek do minimální ceny objednávky (1 500 Kč) | | ${(1500 - rawSubTotalVal).toLocaleString()} Kč`);
+    }
+
     return lines.join('\n');
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) {
-      alert('Prosím vyplňte jméno a email.');
+    if (!formData.name || !formData.email || !formData.psc.trim()) {
+      alert('Prosím vyplňte jméno, email a PSČ realizace.');
       return;
     }
 
     setIsSubmitting(true);
     setSubmitStatus('idle');
+
+    const formattedMessage = formData.address 
+      ? `Přesná adresa realizace: ${formData.address}\n\n${formData.message || 'Bez zprávy'}`
+      : formData.message || 'Bez zprávy';
 
     const templateParams = {
       to_name: formData.name,
@@ -526,7 +583,8 @@ export default function App() {
       frequency: formData.serviceType === 'pravidelná' ? formData.frequency : 'N/A',
       date: formData.date || 'Nespecifikováno',
       psc: formData.psc || 'Nespecifikováno',
-      message: formData.message || 'Bez zprávy',
+      address: formData.address || 'Nespecifikováno',
+      message: formattedMessage,
       price_breakdown: getDetailedEmailBreakdown()
     };
 
@@ -555,6 +613,8 @@ export default function App() {
           name: '',
           email: '',
           message: '',
+          psc: '',
+          address: '',
           items: [
             { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false, disposeBioWaste: true },
           ]
@@ -911,15 +971,32 @@ export default function App() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">PSČ (pro dopravu)</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">PSČ (pro dopravu - povinné) <span className="text-brand-500 font-bold">*</span></label>
                       <input 
                         type="text" 
-                        placeholder="463 12"
+                        required
+                        placeholder="e.g. 463 12"
                         value={formData.psc}
                         onChange={(e) => setFormData({...formData, psc: e.target.value})}
                         className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                       />
+                      {isLiberecFreeShipping && (
+                        <p className="text-xs text-emerald-600 font-bold mt-1.5 flex items-center gap-1.5 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
+                          <CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Doprava po Liberci a okolí je zdarma!
+                        </p>
+                      )}
                     </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Přesná adresa realizace (nepovinné)</label>
+                    <input 
+                      type="text" 
+                      placeholder="Ulice, č.p., město"
+                      value={formData.address}
+                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                      className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
+                    />
                   </div>
 
                   <div className="space-y-1">
@@ -943,7 +1020,7 @@ export default function App() {
                             <Calculator size={32} />
                           </div>
                           <div>
-                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-1">Celkový odhad ceny</p>
+                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-1">Celkový odhad ceny {isBelowMinimum && "(minimální hodnota)"}</p>
                             <p className="text-4xl font-black text-brand-400">{calculatedPrice.toLocaleString()} Kč</p>
                           </div>
                         </div>
@@ -953,6 +1030,16 @@ export default function App() {
                           </p>
                         </div>
                       </div>
+
+                      {isBelowMinimum && (
+                        <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-amber-200 text-sm">
+                          <Info size={18} className="mt-0.5 shrink-0 text-amber-400" />
+                          <div>
+                            <span className="font-bold block mb-0.5 text-amber-400">Minimální cena poptávky je 1 500 Kč</span>
+                            <span>Vaše vybrané služby nedosahují minimální hodnoty zakázky. Byla proto doúčtována minimální cena 1 500 Kč.</span>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="space-y-4">
                         <p className="text-xs font-bold uppercase tracking-[0.3em] text-stone-500 mb-4">Rozpis položek</p>
@@ -1491,11 +1578,21 @@ export default function App() {
       {/* Pricing Table - Simplified and Updated */}
       <section id="ceník" className="section-padding bg-brand-50 relative overflow-hidden scroll-mt-20">
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 max-w-2xl mx-auto flex flex-col items-center">
             <h2 className="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Ceník</h2>
-            <div className="mt-4 inline-flex items-center gap-2 text-stone-600 bg-brand-100/50 px-4 py-2 rounded-full text-base font-medium border border-brand-200">
-              <Info size={16} className="text-brand-600" />
-              Ceny jsou orientační. V případě pravidelné údržby možnost slevy dle pravidelnosti údržby.
+            <p className="mt-4 text-stone-600 font-medium text-lg leading-relaxed">
+              Nabízíme výhodné slevy za pravidelnost i množstevní slevy při větším rozsahu prací.
+              Přesnější a kompletní cenovou nabídku na míru pro váš pozemek získáte okamžitě díky naší kalkulačce.
+            </p>
+            <div className="mt-6">
+              <button 
+                onClick={() => setView('calculator')}
+                className="bg-brand-500 text-white px-6 py-3.5 rounded-2xl font-bold flex items-center gap-2 hover:bg-brand-600 transition-all hover:shadow-lg hover:shadow-brand-500/20 group"
+              >
+                <Calculator size={18} />
+                Otevřít cenovou kalkulačku
+                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
             </div>
           </div>
 
@@ -1704,7 +1801,7 @@ export default function App() {
                 after: "https://i.imgur.com/c74dbNm.jpg"
               },
               {
-                title: "Průřez a vyčištění náletů",
+                title: "Prořez náletů",
                 description: "Likvidace zanedbaných náletových dřevin a prosvětlení prostoru.",
                 before: "https://i.imgur.com/OnGCLDM.jpg",
                 after: "https://i.imgur.com/3tVafbe.jpg"
@@ -1728,7 +1825,7 @@ export default function App() {
                 after: "https://i.imgur.com/6rfjUjj.jpg"
               },
               {
-                title: "Likvidace divokého porostu",
+                title: "Vyčištění zarostlého pozemku",
                 description: "Vyčištění plochy od hustých náletů a příprava na další údržbu.",
                 before: "https://i.imgur.com/w2p9llt.jpg",
                 after: "https://i.imgur.com/rQgBu9t.jpg"
@@ -1844,6 +1941,100 @@ export default function App() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* SEO Localities & Services Coverage Section */}
+      <section className="py-16 px-6 md:px-12 lg:px-24 bg-white border-t border-stone-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-10 text-center md:text-left">
+            <h2 className="text-xs font-bold text-brand-600 uppercase tracking-[0.3em] mb-3">Lokalita & Působnost</h2>
+            <h3 className="text-3xl font-bold text-stone-900 tracking-tight">Kde všude pečujeme o zeleň a zahrady</h3>
+            <p className="mt-3 text-stone-600 font-medium max-w-3xl leading-relaxed">
+              Zajišťujeme kompletní <strong>zahradnické služby</strong>, <strong>údržbu zeleně</strong> a <strong>sekání trávy</strong> v celém Libereckém kraji. Ať už potřebujete jednorázové posečení přerostlé louky, nebo pravidelnou celoroční péči o firemní areál či soukromou zahradu, jsme tu pro vás. Naše lokalita působnosti zahrnuje následující města a přilehlé obce:
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Liberecko card */}
+            <div className="bg-stone-50 p-6 rounded-2xl border border-stone-200/60 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-4 text-brand-600">
+                  <MapPin size={20} className="shrink-0" />
+                  <h4 className="font-bold text-lg text-stone-900">Liberec a okolí</h4>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                  {['Liberec', 'Chrastava', 'Hrádek nad Nisou', 'Frýdlant', 'Dlouhý Most', 'Šimonovice', 'Jeřmanice', 'Stráž nad Nisou', 'Mníšek u Liberce', 'Vratislavice nad Nisou'].map((town) => (
+                    <span key={town} className="text-xs bg-white text-stone-700 font-bold px-2.5 py-1 rounded-md border border-stone-200/80">
+                      {town}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-xs text-stone-500 italic mt-auto pt-4 border-t border-stone-200 leading-relaxed font-semibold">
+                <strong>Hledané služby:</strong> zahradník Liberec, sekání trávy Liberecko, sečení trávníků Chrastava, střih živého plotu Hrádek nad Nisou, prořezávání a kácení stromů Frýdlant, údržba zeleně Dlouhý Most, pletí záhonů Šimonovice, mulčování kůrou Jeřmanice, zahradnické práce Stráž nad Nisou, zimní údržba sněhu Mníšek u Liberce, odvoz bioodpadu Vratislavice nad Nisou.
+              </p>
+            </div>
+
+            {/* Jablonecko card */}
+            <div className="bg-stone-50 p-6 rounded-2xl border border-stone-200/60 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-4 text-brand-600">
+                  <MapPin size={20} className="shrink-0" />
+                  <h4 className="font-bold text-lg text-stone-900">Jablonec a okolí</h4>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                  {['Jablonec nad Nisou', 'Rádlo', 'Rychnov u JBC', 'Janov nad Nisou', 'Bedřichov'].map((town) => (
+                    <span key={town} className="text-xs bg-white text-stone-700 font-bold px-2.5 py-1 rounded-md border border-stone-200/80">
+                      {town}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-xs text-stone-500 italic mt-auto pt-4 border-t border-stone-200 leading-relaxed font-semibold">
+                <strong>Hledané služby:</strong> zahradník Jablonec nad Nisou, údržba zeleně Jablonecko, sekání trávy Rychnov u Jablonce nad Nisou, sečení trávníků Janov nad Nisou, odklízení sněhu Bedřichov, střih keřů Jablonecko, vertikutace a hnojení trávníků Jablonec, zahradnické práce Rádlo, údržba zanedbaných pozemků a likvidace náletových dřevin.
+              </p>
+            </div>
+
+            {/* Turnovsko card */}
+            <div className="bg-stone-50 p-6 rounded-2xl border border-stone-200/60 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-4 text-brand-600">
+                  <MapPin size={20} className="shrink-0" />
+                  <h4 className="font-bold text-lg text-stone-900">Turnov a Český ráj</h4>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                  {['Turnov', 'Hodkovice n. M.', 'Malá Skála', 'Frýdštejn', 'Sychrov', 'Jenišovice', 'Ohrazenice', 'Přepeře', 'Příšovice', 'Svijany'].map((town) => (
+                    <span key={town} className="text-xs bg-white text-stone-700 font-bold px-2.5 py-1 rounded-md border border-stone-200/80">
+                      {town}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-xs text-stone-500 italic mt-auto pt-4 border-t border-stone-200 leading-relaxed font-semibold">
+                <strong>Hledané služby:</strong> zahradník Turnov, sekání trávy Hodkovice nad Mohelkou, údržba trávníku Malá Skála, střih živých plotů Frýdštejn, prořezávání ovocných stromů Sychrov, pletí záhonů Jenišovice, zahradnické práce Ohrazenice, zakládání trávníků Přepeře, mulčování záhonů Příšovice, sečení vysoké trávy Svijany, řez stromů a keřů Turnovsko.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 p-6 bg-brand-50/50 rounded-2xl border border-brand-100 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Trees className="text-brand-600 shrink-0" size={24} />
+              <p className="text-sm font-bold text-stone-700">
+                Chcete spočítat orientační cenu údržby zeleně pro vaši lokalitu v našem regionu?
+              </p>
+            </div>
+            <button 
+              onClick={() => {
+                setView('calculator');
+                const calcEl = document.getElementById('calculator-section') || document.getElementById('submit-calc');
+                if (calcEl) calcEl.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="bg-brand-500 hover:bg-brand-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-md shadow-brand-500/10 cursor-pointer flex items-center gap-2 shrink-0"
+            >
+              <Calculator size={15} /> Spustit kalkulačku cen
+            </button>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="bg-stone-50 text-stone-500 py-6 px-6 border-t border-stone-200">
