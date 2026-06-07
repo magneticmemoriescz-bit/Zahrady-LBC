@@ -49,7 +49,7 @@ const services = [
     detailedPrices: [
       { name: "Sekačkou bez sběru (do 10 cm)", price: "2 Kč/m²" },
       { name: "Sekačkou se sběrem (do 10 cm)", price: "2,5 Kč/m²" },
-      { name: "Vysoká tráva (10–15 cm) se sběrem", price: "5 Kč/m²" },
+      { name: "Středně vysoká tráva (10–15 cm) se sběrem", price: "5 Kč/m²" },
       { name: "Vysoká tráva (15–20 cm) se sběrem", price: "8,5 Kč/m²" },
       { name: "Hrabání trávy", price: "6 Kč/m²" },
       { name: "Křovinořez (do 25 cm) bez sběru", price: "6 Kč/m²" }
@@ -154,7 +154,7 @@ const pricingData = [
   { category: "Sekání", icon: Leaf, items: [
     { name: "Sekání trávy sekačkou bez sběru | do 10 cm", price: "2 Kč / m²" },
     { name: "Sekání trávy sekačkou se sběrem | do 10 cm", price: "2,5 Kč / m²" },
-    { name: "Sekání trávy se sběrem | 10–15 cm", price: "5 Kč / m²" },
+    { name: "Sekání středně vysoké trávy se sběrem | 10–15 cm", price: "5 Kč / m²" },
     { name: "Sekání trávy se sběrem | 15–20 cm", price: "8,5 Kč / m²" },
     { name: "Sekání trávy ve svahu | příplatek", price: "+2 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | do 25 cm", price: "6 Kč / m²" },
@@ -214,7 +214,7 @@ const SERVICE_CONFIG: Record<string, {
     subOptions: [
       { label: "Sekačkou bez sběru (do 10 cm)", price: 2 },
       { label: "Sekačkou se sběrem (do 10 cm)", price: 2.5 },
-      { label: "Vysoká tráva (10–15 cm) se sběrem", price: 5 },
+      { label: "Středně vysoká tráva (10–15 cm) se sběrem", price: 5 },
       { label: "Vysoká tráva (15–20 cm) se sběrem", price: 8.5 },
       { label: "Hrabání trávy", price: 6 },
       { label: "Křovinořez (do 25 cm) bez sběru", price: 6 },
@@ -430,13 +430,13 @@ export default function App() {
     const baseTotalForVolume = breakdown.filter(item => !item.label.includes('Sleva')).reduce((sum, item) => sum + item.price, 0);
     let volumeDiscountPercent = 0;
     if (baseTotalForVolume > 30000) {
-      volumeDiscountPercent = 15;
+      volumeDiscountPercent = 20;
     } else if (baseTotalForVolume > 20000) {
-      volumeDiscountPercent = 10;
+      volumeDiscountPercent = 15;
     } else if (baseTotalForVolume > 15000) {
-      volumeDiscountPercent = 7;
+      volumeDiscountPercent = 10;
     } else if (baseTotalForVolume > 10000) {
-      volumeDiscountPercent = 5;
+      volumeDiscountPercent = 7;
     }
 
     if (volumeDiscountPercent > 0) {
@@ -537,13 +537,13 @@ export default function App() {
     const baseTotalForVolume = fullBreakdown.filter(i => !i.label.includes('Sleva')).reduce((sum, item) => sum + item.price, 0);
     let volumeDiscountPercent = 0;
     if (baseTotalForVolume > 30000) {
-      volumeDiscountPercent = 15;
+      volumeDiscountPercent = 20;
     } else if (baseTotalForVolume > 20000) {
-      volumeDiscountPercent = 10;
+      volumeDiscountPercent = 15;
     } else if (baseTotalForVolume > 15000) {
-      volumeDiscountPercent = 7;
+      volumeDiscountPercent = 10;
     } else if (baseTotalForVolume > 10000) {
-      volumeDiscountPercent = 5;
+      volumeDiscountPercent = 7;
     }
 
     if (volumeDiscountPercent > 0) {
