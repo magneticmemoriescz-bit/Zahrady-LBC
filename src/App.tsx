@@ -1,4 +1,4 @@
-/**
+
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -430,13 +430,13 @@ export default function App() {
     const baseTotalForVolume = breakdown.filter(item => !item.label.includes('Sleva')).reduce((sum, item) => sum + item.price, 0);
     let volumeDiscountPercent = 0;
     if (baseTotalForVolume > 30000) {
-      volumeDiscountPercent = 20;
+      volumeDiscountPercent = 12;
     } else if (baseTotalForVolume > 20000) {
-      volumeDiscountPercent = 15;
+      volumeDiscountPercent = 8;
     } else if (baseTotalForVolume > 15000) {
-      volumeDiscountPercent = 10;
+      volumeDiscountPercent = 6;
     } else if (baseTotalForVolume > 10000) {
-      volumeDiscountPercent = 7;
+      volumeDiscountPercent = 4;
     }
 
     if (volumeDiscountPercent > 0) {
@@ -537,13 +537,13 @@ export default function App() {
     const baseTotalForVolume = fullBreakdown.filter(i => !i.label.includes('Sleva')).reduce((sum, item) => sum + item.price, 0);
     let volumeDiscountPercent = 0;
     if (baseTotalForVolume > 30000) {
-      volumeDiscountPercent = 20;
+      volumeDiscountPercent = 12;
     } else if (baseTotalForVolume > 20000) {
-      volumeDiscountPercent = 15;
+      volumeDiscountPercent = 8;
     } else if (baseTotalForVolume > 15000) {
-      volumeDiscountPercent = 10;
+      volumeDiscountPercent = 6;
     } else if (baseTotalForVolume > 10000) {
-      volumeDiscountPercent = 7;
+      volumeDiscountPercent = 4;
     }
 
     if (volumeDiscountPercent > 0) {
