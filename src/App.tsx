@@ -51,7 +51,6 @@ const services = [
       { name: "Sekačkou se sběrem (do 10 cm)", price: "2,5 Kč/m²" },
       { name: "Středně vysoká tráva (10–15 cm) se sběrem", price: "5 Kč/m²" },
       { name: "Vysoká tráva (15–20 cm) se sběrem", price: "8,5 Kč/m²" },
-      { name: "Hrabání trávy", price: "6 Kč/m²" },
       { name: "Křovinořez (do 25 cm) bez sběru", price: "6 Kč/m²" }
     ]
   },
@@ -65,7 +64,9 @@ const services = [
     detailedPrices: [
       { name: "Nižší živé ploty (do 2 m)", price: "60 Kč/m" },
       { name: "Vyšší živé ploty (nad 2 m)", price: "120 Kč/m" },
-      { name: "Samostatné keře (solitérní)", price: "250 Kč/ks" },
+      { name: "Prořez keře - malý keř", price: "300 Kč/ks" },
+      { name: "Prořez keře - střední keř", price: "500 Kč/ks" },
+      { name: "Prořez keře - velký keř", price: "800 Kč/ks" },
       { name: "Stromy (ovocné a mladší)", price: "900 Kč/ks" },
       { name: "Stromy (starší / velký prořez)", price: "2500 Kč/ks" },
       { name: "Práce ve svahu (příplatek)", price: "+15 Kč/m" }
@@ -76,10 +77,10 @@ const services = [
     description: "Pletí, mulčování, hnojení a výsadba nových rostlin. Postaráme se, aby vaše záhony kvetly.",
     longDescription: "Kompletní péče o vaše okrasné i užitkové záhony. Od jarního pletí a hnojení přes doplňování mulčovací kůry až po podzimní přípravu na zimu. Zajistíme potřebný materiál pro výsadbu i údržbu.",
     icon: Shovel,
-    price: "od 600 Kč/hod",
+    price: "od 800 Kč/hod",
     image: "https://images.pexels.com/photos/59659/pexels-photo-59659.jpeg?auto=compress&cs=tinysrgb&w=800",
     detailedPrices: [
-      { name: "Pletí plevele", price: "600 Kč/hod" },
+      { name: "Pletí plevele", price: "800 Kč/hod" },
       { name: "Mulčování a výsadba", price: "800 Kč/hod" },
       { name: "Doplnění zeminy", price: "800 Kč/hod" }
     ]
@@ -92,15 +93,15 @@ const services = [
     price: "od 12 Kč/m²",
     image: "https://images.pexels.com/photos/12932883/pexels-photo-12932883.jpeg?auto=compress&cs=tinysrgb&w=800",
     detailedPrices: [
-      { name: "Balíček Standard (běžná údržba: vertikutace, topdressing, dosev, hnojení)", price: "50 Kč/m²" },
-      { name: "Balíček Prémium (anglický trávník: Standard + aerifikace, pískování)", price: "115 Kč/m²" },
+      { name: "Balíček Standard (běžná údržba: vertikutace, topdressing, dosev, hnojení)", price: "60 Kč/m²" },
+      { name: "Balíček Prémium (Premium údržba: Standard + aerifikace, pískování)", price: "125 Kč/m²" },
       { name: "Vertikutace trávníku (včetně vyčesání)", price: "12 Kč/m²" },
       { name: "Topdressing / substrát (včetně substrátu)", price: "29 Kč/m²" },
       { name: "Dosev (včetně osiva)", price: "17 Kč/m²" },
       { name: "Hnojení trávníku (včetně hnojiva)", price: "12 Kč/m²" },
       { name: "Pískování trávníku (včetně písku)", price: "40 Kč/m²" },
       { name: "Aerifikace trávníku (dutými hroty, včetně úklidu)", price: "32 Kč/m²" },
-      { name: "Ruční pletí trávníku", price: "600 Kč/hod" }
+      { name: "Ruční pletí trávníku", price: "800 Kč/hod" }
     ]
   },
   {
@@ -160,22 +161,21 @@ const pricingData = [
     { name: "Sekání křovinořezem bez sběru | do 25 cm", price: "6 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | 30–50 cm", price: "9 Kč / m²" },
     { name: "Sekání křovinořezem bez sběru | 50–100 cm", price: "16 Kč / m²" },
-    { name: "Hrabání trávy", price: "6 Kč / m²" },
   ]},
   { category: "Péče o trávník", icon: Leaf, items: [
-    { name: "Balíček Standard | (běžná údržba: vertikutace, topdressing, hnojení, dosev)", price: "50 Kč / m²" },
-    { name: "Balíček Prémium | (anglický trávník: Standard + aerifikace + pískování)", price: "115 Kč / m²" },
+    { name: "Balíček Standard | (běžná údržba: vertikutace, topdressing, hnojení, dosev)", price: "60 Kč / m²" },
+    { name: "Balíček Prémium | (Premium údržba: Standard + aerifikace + pískování)", price: "125 Kč / m²" },
     { name: "Vertikutace trávníku | (včetně vyčesání)", price: "12 Kč / m²" },
     { name: "Dosev | (včetně osiva)", price: "17 Kč / m²" },
     { name: "Aplikace substrátu (topdressing) | (včetně substrátu)", price: "29 Kč / m²" },
     { name: "Hnojení | (včetně hnojiva)", price: "12 Kč / m²" },
     { name: "Pískování | (včetně písku)", price: "40 Kč / m²" },
     { name: "Aerifikace trávníku | (dutými hroty, včetně úklidu)", price: "32 Kč / m²" },
-    { name: "Ruční pletí trávníku (vypichování)", price: "600 Kč / hod" },
+    { name: "Ruční pletí trávníku (vypichování)", price: "800 Kč / hod" },
     { name: "Oprava trávníku | (zemina + osivo)", price: "25 Kč / m²" },
   ]},
   { category: "Záhon", icon: Flower2, items: [
-    { name: "Pletí plevele", price: "600 Kč / hod" },
+    { name: "Pletí plevele", price: "800 Kč / hod" },
     { name: "Mulčování", price: "800 Kč / hod | (+materiál)" },
     { name: "Doplnění zeminy", price: "800 Kč / hod | (+materiál)" },
     { name: "Výsadba", price: "800 Kč / hod | (+materiál)" },
@@ -183,7 +183,9 @@ const pricingData = [
   { category: "Střih keřů, plotů a stromů", icon: Trees, items: [
     { name: "Nižší živé ploty | do 2 m", price: "60 Kč / m" },
     { name: "Vyšší živé ploty | nad 2 m", price: "120 Kč / m" },
-    { name: "Střih samostatných keřů | solitérní", price: "250 Kč / ks" },
+    { name: "Prořez keře | malý keř", price: "300 Kč / ks" },
+    { name: "Prořez keře | střední keř", price: "500 Kč / ks" },
+    { name: "Prořez keře | velký keř", price: "800 Kč / ks" },
     { name: "Prořez ovocných a mladších stromů", price: "900 Kč / ks" },
     { name: "Prořez starších stromů / rozsáhlý", price: "2500 Kč / ks" },
     { name: "Práce ve svahu | příplatek", price: "+15 Kč / m" },
@@ -212,14 +214,12 @@ const SERVICE_CONFIG: Record<string, {
     slopeSurcharge: 2,
     bioWasteFactor: 0.003,
     subOptions: [
-      { label: "Sekačkou bez sběru (do 10 cm)", price: 2 },
-      { label: "Sekačkou se sběrem (do 10 cm)", price: 2.5 },
-      { label: "Středně vysoká tráva (10–15 cm) se sběrem", price: 5 },
-      { label: "Vysoká tráva (15–20 cm) se sběrem", price: 8.5 },
-      { label: "Hrabání trávy", price: 6 },
-      { label: "Křovinořez (do 25 cm) bez sběru", price: 6 },
-      { label: "Křovinořez (30–50 cm) bez sběru", price: 9 },
-      { label: "Křovinořez (50–100 cm) bez sběru", price: 16 },
+      { label: "Nízká tráva sekačkou (do 10 cm)", price: 2 },
+      { label: "Středně vysoká tráva sekačkou (10–15 cm)", price: 4.5 },
+      { label: "Vysoká tráva sekačkou (15–20 cm)", price: 8 },
+      { label: "Křovinořez (do 25 cm)", price: 6 },
+      { label: "Křovinořez (30–50 cm)", price: 9 },
+      { label: "Křovinořez (50–100 cm)", price: 16 },
     ]
   },
   "Střih keřů, plotů a stromů": {
@@ -231,14 +231,16 @@ const SERVICE_CONFIG: Record<string, {
     subOptions: [
       { label: "Nižší živé ploty (do 2 m)", price: 60, unit: "m" },
       { label: "Vyšší živé ploty (nad 2 m)", price: 120, unit: "m" },
-      { label: "Samostatné keře (solitérní)", price: 250, unit: "ks" },
+      { label: "Prořez keře - malý keř", price: 300, unit: "ks" },
+      { label: "Prořez keře - střední keř", price: 500, unit: "ks" },
+      { label: "Prořez keře - velký keř", price: 800, unit: "ks" },
       { label: "Prořez ovocných a mladších stromů", price: 900, unit: "ks" },
       { label: "Prořez starších stromů / rozsáhlý", price: 2500, unit: "ks" },
     ]
   },
   "Pletí a údržba záhonů": {
     unit: "hod",
-    basePrice: 600,
+    basePrice: 800,
     bioWasteFactor: 0.02,
   },
   "Mulčování": {
@@ -254,15 +256,15 @@ const SERVICE_CONFIG: Record<string, {
     basePrice: 12,
     bioWasteFactor: 0.001,
     subOptions: [
-      { label: "Balíček Standard (běžná údržba: verti, topdressing, hnojení, dosev)", price: 50 },
-      { label: "Balíček Prémium (anglický trávník: Standard + aeri + písek)", price: 115 },
+      { label: "Balíček Standard (běžná údržba: verti, topdressing, hnojení, dosev)", price: 60 },
+      { label: "Balíček Prémium (Premium údržba: Standard + aeri + písek)", price: 125 },
       { label: "Vertikutace trávníku (včetně vyčesání)", price: 12 },
       { label: "Aplikace substrátu (včetně substrátu)", price: 29 },
       { label: "Dosev (včetně osiva)", price: 17 },
       { label: "Hnojení (včetně hnojiva)", price: 12 },
       { label: "Pískování (včetně písku)", price: 40 },
       { label: "Aerifikace trávníku (včetně úklidu)", price: 32 },
-      { label: "Ruční pletí trávníku (vypichování)", price: 600, unit: "hod" },
+      { label: "Ruční pletí trávníku (vypichování)", price: 800, unit: "hod" },
     ]
   },
   "Úklid listí a bioodpadu": {
@@ -335,7 +337,7 @@ export default function App() {
     address: '',
     message: '',
     items: [
-      { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false, disposeBioWaste: true },
+      { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Nízká tráva sekačkou (do 10 cm)", isSlope: false, disposeBioWaste: true },
       { id: Math.random().toString(36).substr(2, 9), service: "Žádná", quantity: 0, isSlope: false, disposeBioWaste: true },
     ] as ServiceItem[]
   });
@@ -356,8 +358,59 @@ export default function App() {
         if (selectedSub) basePrice = selectedSub.price;
       }
 
+      let labelAddition = "";
+      if (item.service === "Sekání trávy") {
+        if (item.subOption?.includes("sekačkou")) {
+          if (item.subOption.includes("do 10 cm")) {
+            if (item.disposeBioWaste) {
+              basePrice = 2.5;
+              labelAddition = " + likvidace bioodpadu";
+            } else {
+              basePrice = 2;
+            }
+          } else if (item.subOption.includes("10–15 cm")) {
+            if (!item.disposeBioWaste) {
+              basePrice = 3.5;
+            } else {
+              basePrice = 4.5;
+              labelAddition = " + likvidace bioodpadu";
+            }
+          } else if (item.subOption.includes("15–20 cm")) {
+            if (!item.disposeBioWaste) {
+              basePrice = 6.5;
+            } else {
+              basePrice = 8;
+              labelAddition = " + likvidace bioodpadu";
+            }
+          }
+        } else if (item.subOption?.includes("Křovinořez")) {
+          if (item.subOption.includes("do 25 cm")) {
+            if (item.disposeBioWaste) {
+              basePrice = 11;
+              labelAddition = " + hrabání a likvidace";
+            } else {
+              basePrice = 6;
+            }
+          } else if (item.subOption.includes("30–50 cm")) {
+            if (item.disposeBioWaste) {
+              basePrice = 15;
+              labelAddition = " + hrabání a likvidace";
+            } else {
+              basePrice = 9;
+            }
+          } else if (item.subOption.includes("50–100 cm")) {
+            if (item.disposeBioWaste) {
+              basePrice = 23;
+              labelAddition = " + hrabání a likvidace";
+            } else {
+              basePrice = 16;
+            }
+          }
+        }
+      }
+
       let itemTotal = basePrice * item.quantity;
-      let label = `${item.service}${item.subOption ? ` (${item.subOption})` : ''}`;
+      let label = `${item.service}${item.subOption ? ` (${item.subOption})` : ''}${labelAddition}`;
       
       if (item.isSlope && config.hasSlope && config.slopeSurcharge) {
         const surcharge = config.slopeSurcharge * item.quantity;
@@ -375,18 +428,8 @@ export default function App() {
 
       // Bio waste calculation
       if (config.bioWasteFactor && item.disposeBioWaste) {
-        // Only add bio waste for grass mowing if it's "se sběrem"
-        if (item.service === "Sekání trávy") {
-          if (item.subOption?.includes("se sběrem")) {
-            let specificFactor = config.bioWasteFactor;
-            if (item.subOption.includes("do 10 cm")) {
-              specificFactor = 0.001; // 1/3 of 0.003
-            } else if (item.subOption.includes("10–15 cm")) {
-              specificFactor = 0.0015; // 1/2 of 0.003
-            }
-            totalBioWasteVolume += specificFactor * item.quantity;
-          }
-        } else {
+        // Only accumulate bio waste volume for other services, as grass mowing is now calculated directly in the unit price
+        if (item.service !== "Sekání trávy") {
           totalBioWasteVolume += config.bioWasteFactor * item.quantity;
         }
       }
@@ -475,11 +518,63 @@ export default function App() {
         if (selectedSub) unitPrice = selectedSub.price;
       }
 
+      let lineLabelAddition = "";
+      if (item.service === "Sekání trávy") {
+        if (item.subOption?.includes("sekačkou")) {
+          if (item.subOption.includes("do 10 cm")) {
+            if (item.disposeBioWaste) {
+              unitPrice = 2.5;
+              lineLabelAddition = " + likvidace bioodpadu";
+            } else {
+              unitPrice = 2;
+            }
+          } else if (item.subOption.includes("10–15 cm")) {
+            if (!item.disposeBioWaste) {
+              unitPrice = 3.5;
+            } else {
+              unitPrice = 4.5;
+              lineLabelAddition = " + likvidace bioodpadu";
+            }
+          } else if (item.subOption.includes("15–20 cm")) {
+            if (!item.disposeBioWaste) {
+              unitPrice = 6.5;
+            } else {
+              unitPrice = 8;
+              lineLabelAddition = " + likvidace bioodpadu";
+            }
+          }
+        } else if (item.subOption?.includes("Křovinořez")) {
+          if (item.subOption.includes("do 25 cm")) {
+            if (item.disposeBioWaste) {
+              unitPrice = 11;
+              lineLabelAddition = " + hrabání a likvidace";
+            } else {
+              unitPrice = 6;
+            }
+          } else if (item.subOption.includes("30–50 cm")) {
+            if (item.disposeBioWaste) {
+              unitPrice = 15;
+              lineLabelAddition = " + hrabání a likvidace";
+            } else {
+              unitPrice = 9;
+            }
+          } else if (item.subOption.includes("50–100 cm")) {
+            if (item.disposeBioWaste) {
+              unitPrice = 23;
+              lineLabelAddition = " + hrabání a likvidace";
+            } else {
+              unitPrice = 16;
+            }
+          }
+        }
+      }
+
       const selectedSubOption = config?.subOptions?.find(so => so.label === item.subOption);
       const currentUnit = selectedSubOption?.unit || config?.unit || '';
 
       const baseItemTotal = unitPrice * item.quantity;
-      lines.push(`${item.service}${item.subOption ? ` (${item.subOption})` : ''} | ${item.quantity} ${currentUnit} | ${baseItemTotal.toLocaleString()} Kč`);
+      let lineLabel = `${item.service}${item.subOption ? ` (${item.subOption})` : ''}${lineLabelAddition}`;
+      lines.push(`${lineLabel} | ${item.quantity} ${currentUnit} | ${baseItemTotal.toLocaleString()} Kč`);
       
       if (item.isSlope && config.hasSlope && config.slopeSurcharge) {
         const surcharge = config.slopeSurcharge * item.quantity;
@@ -488,14 +583,7 @@ export default function App() {
 
       // Bio waste calculation logic (sync with getPriceBreakdown)
       if (config.bioWasteFactor && item.disposeBioWaste) {
-        if (item.service === "Sekání trávy") {
-          if (item.subOption?.includes("se sběrem")) {
-            let specificFactor = config.bioWasteFactor;
-            if (item.subOption.includes("do 10 cm")) specificFactor = 0.001;
-            else if (item.subOption.includes("10–15 cm")) specificFactor = 0.0015;
-            totalBioWasteVolume += specificFactor * item.quantity;
-          }
-        } else {
+        if (item.service !== "Sekání trávy") {
           totalBioWasteVolume += config.bioWasteFactor * item.quantity;
         }
       }
@@ -616,7 +704,7 @@ export default function App() {
           psc: '',
           address: '',
           items: [
-            { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Sekačkou bez sběru (do 10 cm)", isSlope: false, disposeBioWaste: true },
+            { id: Math.random().toString(36).substr(2, 9), service: "Sekání trávy", quantity: 0, subOption: "Nízká tráva sekačkou (do 10 cm)", isSlope: false, disposeBioWaste: true },
           ]
         });
       }, 3000);
@@ -805,7 +893,7 @@ export default function App() {
                                     }}
                                     className="w-full px-4 py-2.5 rounded-xl bg-white border border-stone-200 focus:border-brand-400 outline-none transition-all font-bold text-base"
                                   />
-                                  {config?.bioWasteFactor && (item.service !== "Sekání trávy" || item.subOption?.includes("se sběrem")) && (
+                                  {config?.bioWasteFactor && (
                                     <div className="flex items-center gap-2 mt-1 px-1">
                                       <label className="flex items-center gap-2 cursor-pointer group">
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 group-hover:text-brand-500 transition-colors">Likvidace odpadu</span>
