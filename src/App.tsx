@@ -427,18 +427,53 @@ export default function App() {
       breakdown.push({ label, price: itemTotal });
 
       // Bio waste calculation
-      if (config.bioWasteFactor && item.disposeBioWaste) {
-        // Only accumulate bio waste volume for other services, as grass mowing is now calculated directly in the unit price
-        if (item.service !== "Sekání trávy") {
-          totalBioWasteVolume += config.bioWasteFactor * item.quantity;
+      if (item.disposeBioWaste) {
+        let factor = 0;
+        if (item.service === "Sekání trávy") {
+          if (item.subOption?.includes("do 10 cm")) {
+            factor = 0.001;
+          } else if (item.subOption?.includes("10–15 cm")) {
+            factor = 0.0015;
+          } else if (item.subOption?.includes("15–20 cm")) {
+            factor = 0.002;
+          } else if (item.subOption?.includes("do 25 cm")) {
+            factor = 0.0025;
+          } else if (item.subOption?.includes("30–50 cm")) {
+            factor = 0.004;
+          } else if (item.subOption?.includes("50–100 cm")) {
+            factor = 0.008;
+          } else {
+            factor = 0.003;
+          }
+        } else if (item.service === "Střih keřů, plotů a stromů") {
+          if (item.subOption?.includes("Nižší živé ploty")) {
+            factor = 0.03;
+          } else if (item.subOption?.includes("Vyšší živé ploty")) {
+            factor = 0.08;
+          } else if (item.subOption?.includes("malý keř")) {
+            factor = 0.1;
+          } else if (item.subOption?.includes("střední keř")) {
+            factor = 0.25;
+          } else if (item.subOption?.includes("velký keř")) {
+            factor = 0.5;
+          } else if (item.subOption?.includes("ovocných a mladších")) {
+            factor = 0.75;
+          } else if (item.subOption?.includes("starších stromů / rozsáhlý")) {
+            factor = 3.0;
+          } else {
+            factor = 0.05;
+          }
+        } else if (config.bioWasteFactor) {
+          factor = config.bioWasteFactor;
         }
+        totalBioWasteVolume += factor * item.quantity;
       }
     });
 
     if (totalBioWasteVolume > 0) {
-      const bioWastePrice = Math.ceil(totalBioWasteVolume * 450);
+      const bioWastePrice = Math.max(450, Math.ceil(totalBioWasteVolume * 450));
       breakdown.push({ 
-        label: `Odvoz a likvidace bioodpadu (odhad ${totalBioWasteVolume.toFixed(2)} m³)`, 
+        label: `Odvoz bioodpadu (odhad ${totalBioWasteVolume.toFixed(2)} m³)`, 
         price: bioWastePrice 
       });
     }
@@ -582,16 +617,52 @@ export default function App() {
       }
 
       // Bio waste calculation logic (sync with getPriceBreakdown)
-      if (config.bioWasteFactor && item.disposeBioWaste) {
-        if (item.service !== "Sekání trávy") {
-          totalBioWasteVolume += config.bioWasteFactor * item.quantity;
+      if (item.disposeBioWaste) {
+        let factor = 0;
+        if (item.service === "Sekání trávy") {
+          if (item.subOption?.includes("do 10 cm")) {
+            factor = 0.001;
+          } else if (item.subOption?.includes("10–15 cm")) {
+            factor = 0.0015;
+          } else if (item.subOption?.includes("15–20 cm")) {
+            factor = 0.002;
+          } else if (item.subOption?.includes("do 25 cm")) {
+            factor = 0.0025;
+          } else if (item.subOption?.includes("30–50 cm")) {
+            factor = 0.004;
+          } else if (item.subOption?.includes("50–100 cm")) {
+            factor = 0.008;
+          } else {
+            factor = 0.003;
+          }
+        } else if (item.service === "Střih keřů, plotů a stromů") {
+          if (item.subOption?.includes("Nižší živé ploty")) {
+            factor = 0.03;
+          } else if (item.subOption?.includes("Vyšší živé ploty")) {
+            factor = 0.08;
+          } else if (item.subOption?.includes("malý keř")) {
+            factor = 0.1;
+          } else if (item.subOption?.includes("střední keř")) {
+            factor = 0.25;
+          } else if (item.subOption?.includes("velký keř")) {
+            factor = 0.5;
+          } else if (item.subOption?.includes("ovocných a mladších")) {
+            factor = 0.75;
+          } else if (item.subOption?.includes("starších stromů / rozsáhlý")) {
+            factor = 3.0;
+          } else {
+            factor = 0.05;
+          }
+        } else if (config.bioWasteFactor) {
+          factor = config.bioWasteFactor;
         }
+        totalBioWasteVolume += factor * item.quantity;
       }
     });
 
     if (totalBioWasteVolume > 0) {
-      const bioWastePrice = Math.ceil(totalBioWasteVolume * 450);
-      lines.push(`Odvoz a likvidace bioodpadu (odhad ${totalBioWasteVolume.toFixed(2)} m³) | | ${bioWastePrice.toLocaleString()} Kč`);
+      const bioWastePrice = Math.max(450, Math.ceil(totalBioWasteVolume * 450));
+      lines.push(`Odvoz bioodpadu (odhad ${totalBioWasteVolume.toFixed(2)} m³) | | ${bioWastePrice.toLocaleString()} Kč`);
     }
 
     if (formData.psc) {
